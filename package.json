@@ -1,0 +1,71 @@
+{
+	"name": "react-hombre-nuevo",
+	"version": "1.0.0",
+	"description": "React PWA Applications.",
+	"main": "index.js",
+	"repository": {
+		"type": "git",
+		"url": "git+https://CarlosZapataH@bitbucket.org/confipetrolproyectos/hombre-nuevo.git"
+	},
+	"scripts": {
+		"webpack-dev-server": "webpack-dev-server",
+		"dev": "webpack serve --mode=development",
+		"prod": "SET NODE_ENV=production& webpack --mode=production",
+		"serve": "npm run prod && serve -s dist -l 8080",
+		"svg": "svgr -d src/components/icons src/components/icons/svgs"
+	},
+	"keywords": [],
+	"author": "Carlos Z",
+	"license": "MIT",
+	"engines": {
+		"node": ">=14.21.3"
+	},
+	"dependencies": {
+		"@emotion/react": "^11.11.1",
+		"@emotion/styled": "^11.11.0",
+		"@mui/icons-material": "^5.14.0",
+		"@mui/lab": "^5.0.0-alpha.136",
+		"@mui/material": "^5.14.0",
+		"@reduxjs/toolkit": "^1.9.5",
+		"axios": "^0.21.1",
+		"css-loader": "^5.2.6",
+		"dotenv": "^10.0.0",
+		"file-loader": "^6.2.0",
+		"moment": "^2.29.4",
+		"prop-types": "^15.8.1",
+		"react": "^17.0.2",
+		"react-dom": "^17.0.2",
+		"react-qr-code": "^2.0.11",
+		"react-redux": "^8.1.1",
+		"react-router-dom": "^6.14.1",
+		"read-excel-file": "^5.6.1",
+		"style-loader": "^2.0.0",
+		"sweetalert2": "^11.4.8",
+		"workbox-cacheable-response": "^6.1.5",
+		"workbox-core": "^6.1.5",
+		"workbox-expiration": "^6.1.5",
+		"workbox-precaching": "^6.1.5",
+		"workbox-routing": "^6.1.5",
+		"workbox-strategies": "^6.1.5",
+		"workbox-window": "^6.1.5"
+	},
+	"devDependencies": {
+		"@babel/core": "^7.14.3",
+		"@babel/plugin-proposal-class-properties": "^7.13.0",
+		"@babel/preset-env": "^7.14.4",
+		"@babel/preset-react": "^7.13.13",
+		"@svgr/cli": "^8.0.1",
+		"babel-loader": "^8.2.2",
+		"copy-webpack-plugin": "^9.0.0",
+		"dotenv-webpack": "^7.0.2",
+		"html-webpack-plugin": "^5.3.1",
+		"path": "^0.12.7",
+		"sass": "^1.63.6",
+		"sass-loader": "^13.3.2",
+		"serve": "^14.2.0",
+		"webpack": "^5.38.1",
+		"webpack-cli": "^4.7.0",
+		"webpack-dev-server": "^4.15.1",
+		"workbox-webpack-plugin": "^6.1.5"
+	}
+}

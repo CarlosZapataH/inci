@@ -1,0 +1,17 @@
+.sectionLogin {
+	.banner {
+		height: 100vh;
+		background-image: url('@src/images/confipetrol-background.jpg');
+		background-size: cover;
+		background-position: center;
+		@media (max-width: 900px) {
+			height: 30vh;
+		}
+	}
+	.caption {
+		text-align: center;
+		&-center {
+			padding-top: 10vh;
+		}
+	}
+}
