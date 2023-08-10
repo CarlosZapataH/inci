@@ -11,6 +11,17 @@ const getProcedures = async (params) => {
 	}
 };
 
+const getFileProcedures = async (params) => {
+	try {
+		const { data } = await http.get('procedure/download', {
+			params: { ...params },
+		});
+		return data || null;
+	} catch (error) {
+		return Promise.reject(error);
+	}
+};
+
 const createProcedures = async (payload) => {
 	try {
 		const { data } = await http.post('procedure/load', payload);
@@ -29,4 +40,4 @@ const createProceduresDocument = async (payload) => {
 	}
 };
 
-export { getProcedures, createProcedures, createProceduresDocument };
+export { getProcedures, createProcedures, createProceduresDocument, getFileProcedures };

@@ -5,6 +5,7 @@ import ProcedureTabs from '@src/components/procedure/elements/ProcedureTabs.jsx'
 import UploadXlsx from '@src/components/procedure/elements/UploadXlsx.jsx';
 import UploadZip from '@src/components/procedure/elements/UploadZip.jsx';
 import TemplateDownloadButton from '@src/components/procedure/elements/TemplateDownloadButton.jsx';
+import ProcedureDownloadButton from '@src/components/procedure/elements/ProcedureDownloadButton.jsx';
 
 const breadcrumbs = [
 	{ value: '/dashboard', text: 'Inicio' },
@@ -17,8 +18,19 @@ const zipTemplateDownloadUrl = `${process.env.REACT_APP_API}/procedure/format/zi
 const ProcedureUpload = () => {
 	return (
 		<div>
-			<CustomBreadcrumbs breadcrumbs={breadcrumbs} />
 			<Container>
+				<Box
+					sx={{
+						display: 'flex',
+						minHeight: 'initial',
+						flexWrap: 'wrap',
+						alignItems: 'center',
+						justifyContent: 'space-between',
+					}}
+				>
+					<CustomBreadcrumbs breadcrumbs={breadcrumbs} />
+					<ProcedureDownloadButton />
+				</Box>
 				<Box
 					sx={{
 						borderRadius: '10px',

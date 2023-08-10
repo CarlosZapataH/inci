@@ -1,7 +1,11 @@
 import React, { useState, useRef } from 'react';
 import { Button, Input } from '@mui/material';
 import UploadIcon from '@mui/icons-material/Upload';
-import { validateFileExtension, validateFileSize } from '@src/helpers/listValidation.js';
+import {
+	showValidationErrors,
+	validateFileExtension,
+	validateFileSize,
+} from '@src/helpers/listValidation.js';
 import ImportedDocumentsDialog from '@src/components/procedure/elements/ImportedDocumentsDialog.jsx';
 import * as procedureService from '@src/features/procedure/service/procedure.service.js';
 import { LoadingButton } from '@mui/lab';
@@ -35,7 +39,7 @@ const UploadZip = () => {
 			setProcedures(response?.data || []);
 			setOpen(true);
 		} catch (error) {
-			console.log('error', error);
+			showValidationErrors(error);
 		} finally {
 			resetInputFile();
 			setIsLoading(false);
@@ -56,6 +60,9 @@ const UploadZip = () => {
 		<div id="UploadZip">
 			<Input
 				type="file"
+				inputProps={{
+					accept: '.zip',
+				}}
 				inputRef={fileInputRef}
 				style={{ display: 'none' }}
 				onChange={handleFileChange}

@@ -39,4 +39,29 @@ const validateFileSize = ({ file = null, maxSizeMb = 0 }) => {
 	return result;
 };
 
-export { validateFileExtension, validateFileSize };
+const showValidationErrors = (error) => {
+	const { message } = error?.response?.data || {};
+	let errorTitle = 'Validación fallida';
+	let errorMessage = '';
+
+	if (Array.isArray(message)) {
+		for (const item of message) {
+			errorMessage += `${item}\n`;
+		}
+	} else if (typeof message === 'string') {
+		errorMessage = message;
+	} else {
+		errorTitle = 'Error en la solicitud';
+		errorMessage =
+			'Hubo un problema con la solicitud que enviaste. Por favor, verifica los datos e intenta nuevamente.';
+	}
+
+	Swal.fire({
+		icon: 'warning',
+		confirmButtonColor: '#0039a6',
+		title: errorTitle,
+		text: errorMessage,
+	});
+};
+
+export { validateFileExtension, validateFileSize, showValidationErrors };

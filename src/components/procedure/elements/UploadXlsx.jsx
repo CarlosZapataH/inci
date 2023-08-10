@@ -3,6 +3,7 @@ import readXlsxFile from 'read-excel-file';
 import { Button, Input } from '@mui/material';
 import UploadIcon from '@mui/icons-material/Upload';
 import ImportedProceduresDialog from '@src/components/procedure/elements/ImportedProceduresDialog.jsx';
+import { validateFileExtension } from '@src/helpers/listValidation';
 
 const FileUpload = () => {
 	const [open, setOpen] = useState(false);
@@ -11,7 +12,10 @@ const FileUpload = () => {
 
 	const handleFileChange = (event) => {
 		const selectedFile = event.target.files[0];
-		if (selectedFile) {
+		if (
+			selectedFile &&
+			validateFileExtension({ file: selectedFile, allowedExtensions: ['.xlsx'] })
+		) {
 			readFile(selectedFile);
 		}
 	};
@@ -67,6 +71,9 @@ const FileUpload = () => {
 				inputRef={fileInputRef}
 				style={{ display: 'none' }} // Ocultamos el campo de carga de archivos
 				onChange={handleFileChange}
+				inputProps={{
+					accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel',
+				}}
 			/>
 			<Button
 				color="primary"
