@@ -1,13 +1,14 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import { Container, Typography, Breadcrumbs, Link } from '@mui/material';
+import { Container, Typography, Breadcrumbs, Link as LinkMui } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 const CustomBreadcrumbs = (props) => {
 	const { breadcrumbs } = props;
 
 	return (
-		<div id="custom-breadcrumbs" style={{ padding: '24px 0' }}>
+		<div id="custom-breadcrumbs" style={{ padding: '18px 0' }}>
 			<Container>
 				<Breadcrumbs
 					aria-label="breadcrumb"
@@ -16,16 +17,18 @@ const CustomBreadcrumbs = (props) => {
 					{breadcrumbs.map((breadcrumb, index) => {
 						const key = `${index}-bread`;
 						return index !== breadcrumbs.length - 1 ? (
-							<Link
+							<LinkMui
 								underline="hover"
 								color="primary.main"
-								href={breadcrumb?.value}
+								to={breadcrumb?.value}
 								key={key}
+								variant="body2"
+								component={Link}
 							>
 								{breadcrumb?.text}
-							</Link>
+							</LinkMui>
 						) : (
-							<Typography color="text.primary" key={key}>
+							<Typography variant="body2" color="text.primary" key={key}>
 								{breadcrumb?.text}
 							</Typography>
 						);

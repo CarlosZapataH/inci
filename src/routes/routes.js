@@ -8,7 +8,8 @@ import PesonalSearchPage from '@src/pages/search/personal/PesonalSearch';
 import GeneralSearchPage from '@src/pages/search/general/GeneralSearch';
 import ProcedureSearchPage from '@src/pages/procedure/search/ProcedureSearch';
 import ProcedureUploadPage from '@src/pages/procedure/upload/ProcedureUpload';
-import PersonalGuestPage from '@src/pages/guest/personal/PersonalGuest.js'
+import PersonalGuestPage from '@src/pages/guest/personal/PersonalGuest.js';
+import ProcedureDetailPage from '@src/pages/procedure/detail/ProcedureDetailPage.js';
 
 const router = createBrowserRouter([
 	{
@@ -62,6 +63,10 @@ const router = createBrowserRouter([
 			{
 				path: '/procedure/upload',
 				element: <ProcedureUploadPage />,
+			},
+			{
+				path: '/procedure/:procedureId/detail',
+				element: <ProcedureDetailPage />,
 			},
 		],
 	},

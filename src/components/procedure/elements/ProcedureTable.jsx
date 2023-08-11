@@ -7,7 +7,8 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Box } from '@mui/material';
+import { Box, Button } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 const ProcedureTable = ({ procedures }) => {
 	const formatDate = (date) => {
@@ -39,7 +40,16 @@ const ProcedureTable = ({ procedures }) => {
 									</TableCell>
 									<TableCell align="center"></TableCell>
 									<TableCell align="center"></TableCell>
-									<TableCell align="center"></TableCell>
+									<TableCell align="center">
+										<Button
+											component={Link}
+											to={`/procedure/${row?.id}/detail`}
+											color="primary"
+											size="small"
+										>
+											Ir a procedimiento
+										</Button>
+									</TableCell>
 								</TableRow>
 							))}
 						</TableBody>
