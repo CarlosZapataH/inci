@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Box, Container, LinearProgress, Typography } from '@mui/material';
+import { Box, Button, Container, LinearProgress, Typography } from '@mui/material';
 import CustomBreadcrumbs from '@src/components/global/CustomBreadcrumbs/index.jsx';
 import * as procedureService from '@src/features/procedure/service/procedure.service.js';
 import { showValidationErrors } from '@src/helpers/listValidation';
 import { useParams } from 'react-router-dom';
 import moment from 'moment';
+import PdfPreview from '@src/components/procedure/elements/PdfPreview.jsx';
 
 const breadcrumbs = [
 	{ value: '/dashboard', text: 'Inicio' },
@@ -13,12 +13,11 @@ const breadcrumbs = [
 	{ value: null, text: 'Detalle' },
 ];
 
-const ProcedureSearch = () => {
-	const dispatch = useDispatch();
+const ProcedureDetail = () => {
 	const { procedureId } = useParams();
-	const charges = useSelector((state) => state.security.charges);
 	const [isLoading, setIsLoading] = useState(false);
 	const [procedure, setProcedure] = useState({});
+	const [pdfData, setPdfData] = useState(null);
 
 	useEffect(() => {
 		getProcedureById(procedureId);
@@ -28,7 +27,8 @@ const ProcedureSearch = () => {
 		try {
 			setIsLoading(true);
 			const response = await procedureService.getProcedure({ procedureId });
-			setProcedure(response?.data || []);
+			setProcedure(response?.data || {});
+			loadPdfUrl(response?.data || {});
 		} catch (error) {
 			showValidationErrors(error);
 		} finally {
@@ -56,16 +56,18 @@ const ProcedureSearch = () => {
 		}
 	};
 
-	const getPdfUrl = (procedure) => {
+	const loadPdfUrl = (procedure) => {
 		if (Array.isArray(procedure?.assigns)) {
 			const url = procedure?.assigns[0]?.file || null;
-			return url || '';
+			if (url) setPdfData(url);
 		}
 	};
 
 	const formatDate = (date) => {
-		moment.locale('es');
-		return moment(date).format('LLL');
+		if (date) {
+			moment.locale('es');
+			return moment(date).format('LLL');
+		}
 	};
 
 	return (
@@ -77,6 +79,7 @@ const ProcedureSearch = () => {
 						borderRadius: '10px',
 						overflow: 'hidden',
 						backgroundColor: '#ffffff',
+						mb: 2,
 					}}
 				>
 					{isLoading && <LinearProgress />}
@@ -86,7 +89,7 @@ const ProcedureSearch = () => {
 						</Typography>
 					</Box>
 					<Box p={2} fontSize={14}>
-						<table>
+						<table className='th-left'>
 							<tbody>
 								<tr>
 									<th>Procedimiento: </th>
@@ -98,7 +101,7 @@ const ProcedureSearch = () => {
 								</tr>
 								<tr>
 									<th>Fecha creación: </th>
-									<td>{procedure?.created_at}</td>
+									<td>{formatDate(procedure?.created_at)}</td>
 								</tr>
 								<tr>
 									<th>Cargo: </th>
@@ -116,8 +119,24 @@ const ProcedureSearch = () => {
 						</table>
 					</Box>
 				</Box>
+				<Box
+					sx={{
+						display: 'flex',
+						justifyContent: 'flex-end',
+						mb: 2,
+					}}
+				></Box>
+				<Box
+					sx={{
+						borderRadius: '10px',
+						overflow: 'hidden',
+						mb: 1,
+					}}
+				>
+					<PdfPreview urlPdf={pdfData} />
+				</Box>
 			</Container>
 		</div>
 	);
 };
-export default ProcedureSearch;
+export default ProcedureDetail;
