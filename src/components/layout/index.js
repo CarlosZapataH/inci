@@ -170,6 +170,7 @@ function ResponsiveDrawer(props) {
 						display: 'flex',
 						flexDirection: 'column',
 						flex: '1 1 auto',
+						overflow: 'auto',
 						// flexGrow: 1,
 						//p: 3,
 						//width: { sm: `calc(100% - ${drawerWidth}px)` },

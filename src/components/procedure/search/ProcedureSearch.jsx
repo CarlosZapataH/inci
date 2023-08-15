@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Autocomplete, Box, Container, Grid, TextField } from '@mui/material';
+import { Autocomplete, Box, Container, Grid, LinearProgress, TextField } from '@mui/material';
 import CustomBreadcrumbs from '@src/components/global/CustomBreadcrumbs/index.jsx';
 import ProcedureTabs from '@src/components/procedure/elements/ProcedureTabs.jsx';
 import { listCharges, listCostCenter } from '@src/features/security/securitySlice';
 import { listProcedures } from '@src/features/procedure/procedureSlice';
 import ProcedureTable from '@src/components/procedure/elements/ProcedureTable.jsx';
+import { getProceduresSiscap } from '@src/features/procedure/service/procedure.service.js';
+import { showValidationErrors } from '@src/helpers/listValidation';
 
 const breadcrumbs = [
 	{ value: '/dashboard', text: 'Inicio' },
@@ -16,7 +18,8 @@ const ProcedureSearch = () => {
 	const dispatch = useDispatch();
 	const charges = useSelector((state) => state.security.charges);
 	const costCenter = useSelector((state) => state.security.costCenter);
-	const procedures = useSelector((state) => state.procedure.procedures);
+	const [procedures, setProcedures] = useState([]);
+	const [loadingProcedures, setLoadingProcedures] = useState(false);
 
 	const [filters, setFilters] = useState({
 		q: null,
@@ -47,14 +50,28 @@ const ProcedureSearch = () => {
 		}
 	};
 
+	const getProcedures = async () => {
+		try {
+			setLoadingProcedures(true);
+			const response = await getProceduresSiscap();
+			const { procedimientos } = response;
+			setProcedures(procedimientos);
+		} catch (error) {
+			showValidationErrors(error);
+		} finally {
+			setLoadingProcedures(false);
+		}
+	};
+
 	useEffect(() => {
 		dispatch(listCharges());
 		dispatch(listCostCenter());
+		getProcedures();
 	}, []);
 
-	useEffect(() => {
-		dispatch(listProcedures(filters));
-	}, [filters]);
+	// useEffect(() => {
+	// 	dispatch(listProcedures(filters));
+	// }, [filters]);
 
 	return (
 		<div>
@@ -68,6 +85,7 @@ const ProcedureSearch = () => {
 					}}
 				>
 					<ProcedureTabs />
+					{loadingProcedures && <LinearProgress />}
 					<Box
 						sx={{
 							padding: 2,

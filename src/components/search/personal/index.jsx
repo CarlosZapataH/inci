@@ -5,17 +5,25 @@ import { listUsers, listCoursesByUser } from '@src/features/course/courseSlice';
 import SearchTabs from '@src/components/search/elements/SearchTabs.jsx';
 import CustomBreadcrumbs from '@src/components/global/CustomBreadcrumbs/index.jsx';
 import ResultPersonalTable from '@src/components/search/elements/ResultPersonalTable.jsx';
+import { getCourseSiscapByUser } from '@src/features/course/service/course.js';
+
+import TrainingTable from '@src/components/search/elements/TrainingTable.jsx';
+import QualificationsTable from '@src/components/search/elements/QualificationsTable.jsx';
+import ProceduresTable from '@src/components/search/elements/ProceduresTable.jsx';
 
 import {
 	Autocomplete,
 	Box,
+	CircularProgress,
 	Container,
 	Divider,
 	Grid,
 	Hidden,
+	LinearProgress,
 	TextField,
 	Typography,
 } from '@mui/material';
+import { showValidationErrors } from '@src/helpers/listValidation';
 
 const breadcrumbs = [
 	{ value: '/dashboard', text: 'Inicio' },
@@ -28,6 +36,12 @@ const PesonalSearch = () => {
 	const courses = useSelector((state) => state.course.coursesByUser);
 	const [selectedUser, setSelectedUser] = useState(null);
 	const [valueQr, setValueQr] = useState(null);
+	const [loadingUser, setLoadingUser] = useState(false);
+	const [loadingCourse, setLoadingCourse] = useState(false);
+
+	const [trainings, setTrainings] = useState([]);
+	const [qualifications, setQualifications] = useState([]);
+	const [procedures, setProcedures] = useState([]);
 
 	const [filters, setFilters] = useState({
 		page: 1,
@@ -40,17 +54,64 @@ const PesonalSearch = () => {
 		setSelectedUser(value);
 		setFilters({ ...filters, user_id: value?.id || null });
 		setValueQr(window.location.href + '?userid=' + value?.id);
+		if (value && value?.document) {
+			getCourses(value?.document);
+		}
+	};
+
+	const filterOptions = (options, state) => {
+		const filteredOptions = options.filter(
+			(option) =>
+				option?.fullName
+					?.toLowerCase()
+					.includes(state.inputValue.toLowerCase()) ||
+				option?.document?.toLowerCase().includes(state.inputValue.toLowerCase())
+		);
+		return filteredOptions;
 	};
 
 	useEffect(() => {
-		dispatch(listUsers());
+		getUsers();
 	}, []);
 
-	useEffect(() => {
-		if (filters?.user_id) {
-			dispatch(listCoursesByUser(filters));
+	const addId = (arr) => {
+		if (Array.isArray(arr)) {
+			return arr.map((item, id) => {
+				return { ...item, id };
+			});
 		}
-	}, [filters]);
+	};
+
+	const getUsers = async () => {
+		setLoadingUser(true);
+		await dispatch(listUsers());
+		setLoadingUser(false);
+	};
+
+	const getCourses = async (document) => {
+		setLoadingCourse(true);
+		const data = {
+			Personas: [
+				{
+					Legajo: 0,
+					NroDocumento: document,
+				},
+			],
+		};
+		try {
+			const response = await getCourseSiscapByUser(data);
+			console.log(response);
+			const { capacitaciones, habilitaciones, procedimientos } =
+				response?.personas[0];
+			if (Array.isArray(capacitaciones)) setTrainings(addId(capacitaciones));
+			if (Array.isArray(habilitaciones)) setQualifications(addId(habilitaciones));
+			if (Array.isArray(procedimientos)) setProcedures(addId(procedimientos));
+		} catch (error) {
+			showValidationErrors(error);
+		} finally {
+			setLoadingCourse(false);
+		}
+	};
 
 	return (
 		<div id="PesonalSearch">
@@ -61,12 +122,13 @@ const PesonalSearch = () => {
 				<Box
 					sx={{
 						minHeight: '100%',
-						padding: '24px',
 						backgroundColor: 'white.main',
 						borderRadius: '10px',
+						overflow: 'hidden',
 					}}
 				>
-					<div>
+					{loadingCourse && <LinearProgress />}
+					<Box padding={4}>
 						<Typography
 							sx={{
 								textAlign: 'center',
@@ -90,10 +152,15 @@ const PesonalSearch = () => {
 								id="combo-box-demo"
 								options={users}
 								sx={{ width: '100%' }}
+								loading={loadingUser}
 								onChange={handleAutocompleteChange}
+								filterOptions={filterOptions}
 								getOptionLabel={(option) => option?.fullName}
 								renderInput={(params) => (
-									<TextField {...params} label="Usuario" />
+									<div>
+										<TextField {...params} label="Usuario" />
+										{loadingUser && <LinearProgress />}
+									</div>
 								)}
 							/>
 						</Box>
@@ -187,9 +254,24 @@ const PesonalSearch = () => {
 							</Box>
 						)}
 						{selectedUser && selectedUser?.id && (
-							<ResultPersonalTable courses={courses} />
+							<Grid spacing={4} container>
+								<Grid xs={12} item>
+									<Typography>Capacitaciones</Typography>
+									<TrainingTable trainings={trainings} />
+								</Grid>
+								<Grid xs={12} item>
+									<Typography>Habilitaciones</Typography>
+									<QualificationsTable
+										qualifications={qualifications}
+									/>
+								</Grid>
+								<Grid xs={12} item>
+									<Typography>Procedimientos</Typography>
+									<ProceduresTable procedures={procedures} />
+								</Grid>
+							</Grid>
 						)}
-					</div>
+					</Box>
 				</Box>
 			</Container>
 		</div>

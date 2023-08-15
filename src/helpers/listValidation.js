@@ -50,6 +50,9 @@ const showValidationErrors = (error) => {
 		}
 	} else if (typeof message === 'string') {
 		errorMessage = message;
+	} else if (error?.message) {
+		errorTitle = 'Error en la solicitud';
+		errorMessage = error?.message;
 	} else {
 		errorTitle = 'Error en la solicitud';
 		errorMessage =

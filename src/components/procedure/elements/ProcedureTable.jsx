@@ -21,29 +21,29 @@ const ProcedureTable = ({ procedures }) => {
 					<Table sx={{ minWidth: 400 }} aria-label="simple table">
 						<TableHead>
 							<TableRow>
-								<TableCell>Usuario</TableCell>
-								<TableCell align="center">Cargo</TableCell>
-								<TableCell align="center">Servicio</TableCell>
+								<TableCell>Código</TableCell>
+								<TableCell>Procedimiento</TableCell>
+								<TableCell>Servicio</TableCell>
 								<TableCell align="center">Acciones</TableCell>
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{procedures.map((row) => (
+							{procedures.map((row, index) => (
 								<TableRow
-									key={row.id}
+									key={index + '-procedure'}
 									sx={{
 										'&:last-child td, &:last-child th': { border: 0 },
 									}}
 								>
 									<TableCell component="th" scope="row">
-										{row?.name}
+										{row?.codigoProcedimiento}
 									</TableCell>
-									<TableCell align="center"></TableCell>
-									<TableCell align="center"></TableCell>
+									<TableCell>{row?.nombreProcedimiento}</TableCell>
+									<TableCell>{row?.nombreServicio}</TableCell>
 									<TableCell align="center">
 										<Button
 											component={Link}
-											to={`/procedure/${row?.id}/detail`}
+											to={`/procedure/${row?.codigoProcedimiento}/detail`}
 											color="primary"
 											size="small"
 										>
