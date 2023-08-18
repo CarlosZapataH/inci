@@ -20,6 +20,7 @@ import Typography from '@mui/material/Typography';
 import ConfipetrolLogo from '@src/images/confipetrol-logo.png';
 import { Link } from 'react-router-dom';
 import { esES } from '@mui/material/locale';
+import CompanySelect from '@src/components/global/CompanySelect/CompanySelect.jsx';
 
 const defaultTheme = createTheme(
 	{
@@ -104,26 +105,37 @@ function ResponsiveDrawer(props) {
 					}}
 				>
 					<Toolbar>
-						<IconButton
-							color="inherit"
-							aria-label="open drawer"
-							edge="start"
-							onClick={handleDrawerToggle}
-							sx={{ mr: 2, display: { sm: 'none' } }}
+						<Box
+							sx={{
+								width: '100%',
+								display: 'flex',
+								justifyContent: 'space-between',
+								alignItems: 'center',
+							}}
 						>
-							<MenuIcon />
-						</IconButton>
-						{/* <Typography variant="h6" noWrap component="div">
-							Confipetrol
-						</Typography> */}
-						<Link to="/dashboard">
-							<img
-								style={{ height: '50px' }}
-								className="confi-logo"
-								src={ConfipetrolLogo}
-								alt="confipetrol-logo"
-							/>
-						</Link>
+							<div className="box-left">
+								<IconButton
+									color="inherit"
+									aria-label="open drawer"
+									edge="start"
+									onClick={handleDrawerToggle}
+									sx={{ mr: 2, display: { sm: 'none' } }}
+								>
+									<MenuIcon />
+								</IconButton>
+								<Link to="/dashboard">
+									<img
+										style={{ height: '50px' }}
+										className="confi-logo"
+										src={ConfipetrolLogo}
+										alt="confipetrol-logo"
+									/>
+								</Link>
+							</div>
+							<div className="box-right">
+								<CompanySelect />
+							</div>
+						</Box>
 					</Toolbar>
 				</AppBar>
 				<Box

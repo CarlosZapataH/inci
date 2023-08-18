@@ -11,13 +11,19 @@ const initialState = {
 	token: null,
 	isAuthenticated: false,
 	status: 'authenticating', // 'authenticated','not-authenticated', 'authenticating'
+	companies: null,
 };
 
-const setCompanyStorage = (data) => {
-	const companies = data?.user?.companies;
-	if (Array.isArray(companies)) {
+const getAuthorizedCompanies = (data) => {
+	const companies = data?.user?.companies || null;
+	if (Array.isArray(companies) && companies.length > 0) {
 		localStorage.setItem('company_id', companies[0]?.id);
+		const authorizedCompanies = companies.map((company) => {
+			return { id: company?.id, name: company?.name };
+		});
+		return authorizedCompanies;
 	}
+	return null;
 };
 
 const authSlice = createSlice({
@@ -82,9 +88,9 @@ const authSlice = createSlice({
 				state.status = 'authenticating';
 			})
 			.addCase(checkSession.fulfilled, (state, action) => {
+				state.companies = getAuthorizedCompanies(action?.payload);
 				state.isAuthenticated = true;
 				state.status = 'authenticated';
-				setCompanyStorage(action?.payload);
 			})
 			.addCase(checkSession.rejected, (state, action) => {
 				state.isAuthenticated = false;
