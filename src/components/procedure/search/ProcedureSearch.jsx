@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Autocomplete, Box, Container, Grid, LinearProgress, TextField } from '@mui/material';
+import {
+	Autocomplete,
+	Box,
+	Container,
+	Grid,
+	LinearProgress,
+	TextField,
+} from '@mui/material';
 import CustomBreadcrumbs from '@src/components/global/CustomBreadcrumbs/index.jsx';
 import ProcedureTabs from '@src/components/procedure/elements/ProcedureTabs.jsx';
 import { listCharges, listCostCenter } from '@src/features/security/securitySlice';
@@ -54,7 +61,13 @@ const ProcedureSearch = () => {
 		try {
 			setLoadingProcedures(true);
 			const response = await getProceduresSiscap();
-			const { procedimientos } = response;
+			let { procedimientos } = response;
+			if (Array.isArray(procedimientos)) {
+				procedimientos = procedimientos.map((procedure) => ({
+					...procedure,
+					codigoProcedimiento: (procedure?.codigoProcedimiento || '').trim(),
+				}));
+			}
 			setProcedures(procedimientos);
 		} catch (error) {
 			showValidationErrors(error);

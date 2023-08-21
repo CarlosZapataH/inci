@@ -33,6 +33,17 @@ const getProcedure = async (params) => {
 	}
 };
 
+const getProcedureSiscap = async (params) => {
+	try {
+		const { data } = await http.get('siscap/procedures/show', {
+			params: { ...params },
+		});
+		return data || null;
+	} catch (error) {
+		return Promise.reject(error);
+	}
+};
+
 const getFileProcedures = async (params) => {
 	try {
 		const { data } = await http.get('procedure/download', {
@@ -69,4 +80,5 @@ export {
 	createProceduresDocument,
 	getFileProcedures,
 	getProceduresSiscap,
+	getProcedureSiscap
 };

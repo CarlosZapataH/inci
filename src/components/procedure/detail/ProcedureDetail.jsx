@@ -26,8 +26,10 @@ const ProcedureDetail = () => {
 	const getProcedureById = async (procedureId) => {
 		try {
 			setIsLoading(true);
-			const response = await procedureService.getProcedure({ procedureId });
-			setProcedure(response?.data || {});
+			const response = await procedureService.getProcedureSiscap({
+				code: procedureId,
+			});
+			setProcedure(response?.procedimiento || {});
 			loadPdfUrl(response?.data || {});
 		} catch (error) {
 			showValidationErrors(error);
@@ -89,11 +91,15 @@ const ProcedureDetail = () => {
 						</Typography>
 					</Box>
 					<Box p={2} fontSize={14}>
-						<table className='th-left'>
+						<table className="th-left">
 							<tbody>
 								<tr>
+									<th>Código de Procedimiento: </th>
+									<td>{procedure?.codigoProcedimiento}</td>
+								</tr>
+								<tr>
 									<th>Procedimiento: </th>
-									<td>{procedure?.name}</td>
+									<td>{procedure?.nombreProcedimiento}</td>
 								</tr>
 								<tr>
 									<th>Registrado por: </th>
@@ -108,8 +114,12 @@ const ProcedureDetail = () => {
 									<td>{printItems(procedure, 'charges')}</td>
 								</tr>
 								<tr>
+									<th>Gerencia: </th>
+									<td>{procedure?.nombreGerencia}</td>
+								</tr>
+								<tr>
 									<th>Servicio: </th>
-									<td>{printItems(procedure, 'services')}</td>
+									<td>{procedure?.nombreServicio}</td>
 								</tr>
 								<tr>
 									<th>Fecha asociación PDF: </th>
