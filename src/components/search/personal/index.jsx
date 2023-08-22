@@ -10,6 +10,8 @@ import { getCourseSiscapByUser } from '@src/features/course/service/course.js';
 import TrainingTable from '@src/components/search/elements/TrainingTable.jsx';
 import QualificationsTable from '@src/components/search/elements/QualificationsTable.jsx';
 import ProceduresTable from '@src/components/search/elements/ProceduresTable.jsx';
+import HelmetSvg from '@src/components/search/elements/HelmetSvg.jsx';
+import UpdateUserDialog from '@src/components/search/elements/UpdateUserDialog.jsx';
 
 import {
 	Autocomplete,
@@ -38,6 +40,7 @@ const PesonalSearch = () => {
 	const [valueQr, setValueQr] = useState(null);
 	const [loadingUser, setLoadingUser] = useState(false);
 	const [loadingCourse, setLoadingCourse] = useState(false);
+	const [userSiscap, setUserSiscap] = useState(null);
 
 	const [trainings, setTrainings] = useState([]);
 	const [qualifications, setQualifications] = useState([]);
@@ -100,9 +103,9 @@ const PesonalSearch = () => {
 		};
 		try {
 			const response = await getCourseSiscapByUser(data);
-			console.log(response);
-			const { capacitaciones, habilitaciones, procedimientos } =
+			const { capacitaciones, habilitaciones, procedimientos, ...currentUser } =
 				response?.personas[0];
+			setUserSiscap(currentUser);
 			if (Array.isArray(capacitaciones)) setTrainings(addId(capacitaciones));
 			if (Array.isArray(habilitaciones)) setQualifications(addId(habilitaciones));
 			if (Array.isArray(procedimientos)) setProcedures(addId(procedimientos));
@@ -125,6 +128,7 @@ const PesonalSearch = () => {
 						backgroundColor: 'white.main',
 						borderRadius: '10px',
 						overflow: 'hidden',
+						mb: 2,
 					}}
 				>
 					{loadingCourse && <LinearProgress />}
@@ -247,8 +251,39 @@ const PesonalSearch = () => {
 													</td>
 													<td>{selectedUser?.email}</td>
 												</tr>
+												<tr>
+													<td style={{ color: '#0039a6' }}>
+														Días en la organización:
+													</td>
+													<td>
+														{userSiscap?.days_in_organization ||
+															0}
+													</td>
+												</tr>
+												<tr>
+													<td style={{ color: '#0039a6' }}>
+														Casco:
+													</td>
+													<td>
+														<div>
+															<HelmetSvg
+																fillColor={
+																	userSiscap?.helmet
+																}
+															/>
+														</div>
+													</td>
+												</tr>
 											</tbody>
 										</table>
+
+										<Box display={'flex'} justifyContent={'flex-end'}>
+											<UpdateUserDialog
+												helmetcolor={userSiscap?.helmet}
+												user={userSiscap}
+												getCourses={getCourses}
+											/>
+										</Box>
 									</Grid>
 								</Grid>
 							</Box>
