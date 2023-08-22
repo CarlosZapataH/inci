@@ -26,7 +26,7 @@ const router = createBrowserRouter([
 		element: <PersonalGuestPage />,
 	},
 	{
-		path: '/guest/personal/:userId',
+		path: '/guest/personal/:userDocument',
 		element: <PersonalGuestPage />,
 	},
 	{

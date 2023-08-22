@@ -147,17 +147,17 @@ const handler = createHandlerBoundToURL('/index.html');
 const navigationRoute = new NavigationRoute(handler);
 registerRoute(navigationRoute);
 
-registerRoute(
-	new RegExp('^https://.+?/guest/personal\\?userId=\\d+$'),
-	new CacheFirst({
-		cacheName: 'guest-personal',
-		plugins: [
-			new CacheableResponse({
-				statuses: [200], // Solo almacenamos en caché respuestas con estado 200 (OK).
-			}),
-		],
-	})
-);
+// registerRoute(
+// 	new RegExp('^https://.+?/guest/personal\\?userId=\\d+$'),
+// 	new CacheFirst({
+// 		cacheName: 'guest-personal',
+// 		plugins: [
+// 			new CacheableResponse({
+// 				statuses: [200], // Solo almacenamos en caché respuestas con estado 200 (OK).
+// 			}),
+// 		],
+// 	})
+// );
 
 // Cache the Google Fonts stylesheets with a stale-while-revalidate strategy.
 // @see https://developers.google.com/web/tools/workbox/guides/common-recipes#google_fonts
@@ -208,10 +208,10 @@ registerRoute(
 
 registerRoute(
 	({ url }) =>
-		url.origin === 'https://hombrenuevo-api.smartrix.pe' &&
-		url.pathname.startsWith('/api/v1/course/guest'),
+		url.origin === 'https://hombrenuevo-api.smartrix.pe/api/v1/siscap/users' &&
+		url.method === 'GET',
 	new StaleWhileRevalidate({
-		cacheName: 'confipetrol-api-response',
+		cacheName: 'siscap-api-users',
 		plugins: [
 			new CacheableResponsePlugin({
 				statuses: [0, 200],
@@ -220,6 +220,21 @@ registerRoute(
 		],
 	})
 );
+
+// registerRoute(
+// 	({ url }) =>
+// 		url.origin === 'https://hombrenuevo-api.smartrix.pe/api/v1/siscap/users' &&
+// 		url.pathname.startsWith('/api/v1/siscap/users'),
+// 	new StaleWhileRevalidate({
+// 		cacheName: 'confipetrol-api-response',
+// 		plugins: [
+// 			new CacheableResponsePlugin({
+// 				statuses: [0, 200],
+// 			}),
+// 			new ExpirationPlugin({ maxEntries: 2 }), // Will cache maximum 1 requests.
+// 		],
+// 	})
+// );
 
 /**
  * We use CacheFirst for images because, images are not going to change very often,

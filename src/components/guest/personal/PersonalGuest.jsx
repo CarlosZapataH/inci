@@ -1,124 +1,111 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import QRCode from 'react-qr-code';
-import { listGeneralGuestCourses } from '@src/features/course/courseSlice';
-import SearchTabs from '@src/components/search/elements/SearchTabs.jsx';
 import CustomBreadcrumbs from '@src/components/global/CustomBreadcrumbs/index.jsx';
-import ResultPersonalTable from '@src/components/search/elements/ResultPersonalTable.jsx';
+import TrainingTable from '@src/components/search/elements/TrainingTable.jsx';
+import QualificationsTable from '@src/components/search/elements/QualificationsTable.jsx';
+import ProceduresTable from '@src/components/search/elements/ProceduresTable.jsx';
+import HelmetSvg from '@src/components/search/elements/HelmetSvg.jsx';
+import * as serviceUsers from '@src/features/staff/service/staff.service.js';
+import { showValidationErrors } from '@src/helpers/listValidation';
+import { useParams } from 'react-router-dom';
 
 import {
-	Autocomplete,
 	Box,
 	Container,
 	Divider,
 	Grid,
 	Hidden,
-	TextField,
+	LinearProgress,
 	Typography,
 } from '@mui/material';
-import { useParams, useSearchParams } from 'react-router-dom';
 
 const breadcrumbs = [
-	{ value: '/dashboard', text: 'Inicio' },
-	{ value: '/search/personal', text: 'Búsqueda Personal' },
+	{ value: '/login', text: 'Inicio' },
+	{ value: '', text: 'Personal' },
 ];
 
 const PesonalSearch = () => {
-	const [searchParams] = useSearchParams();
-	//const { userId } = useParams();
-	const dispatch = useDispatch();
-	const coursesUsers = useSelector((state) => state.course.coursesUsers);
-	const [selectedUser, setSelectedUser] = useState(null);
-	const [valueQr, setValueQr] = useState('');
+	const { userDocument } = useParams();
+	const [valueQr, setValueQr] = useState(null);
+	const [loadingCourse, setLoadingCourse] = useState(false);
+	const [userSiscap, setUserSiscap] = useState(null);
+	const [trainings, setTrainings] = useState([]);
+	const [qualifications, setQualifications] = useState([]);
+	const [procedures, setProcedures] = useState([]);
 
-	const [filters, setFilters] = useState({
-		page: 1,
-		pagination: true,
-		user_id: null,
-		per_page: process.env.REACT_APP_PAGINATION_PER_PAGE || 10,
-	});
+	useEffect(() => {
+		getUsers();
+	}, []);
 
-	const handleAutocompleteChange = (event, value) => {
-		setSelectedUser(value);
-		setFilters({ ...filters, user_id: value?.id || null });
-		//setValueQr(window.location.href + '?userid=' + value?.id);
+	const getUsers = async () => {
+		try {
+			setLoadingCourse(true);
+			const response = await serviceUsers.listUsers();
+			const personas = response?.personas || null;
+			getCourses(personas);
+		} catch (error) {
+			showValidationErrors(error);
+		} finally {
+			setLoadingCourse(false);
+		}
 	};
 
-	const getUserCourse = async (userId) => {
-		if (Array.isArray(coursesUsers) && userId) {
-			const found = coursesUsers.find((item) => item?.user_id == userId);
+	const addId = (arr) => {
+		if (Array.isArray(arr)) {
+			return arr.map((item, id) => {
+				return { ...item, id };
+			});
+		}
+	};
+
+	const getCourses = async (personas) => {
+		if (Array.isArray(personas) && userDocument) {
+			const found = personas.find(
+				(personal) => personal?.nroDocumento == userDocument
+			);
 			if (found) {
-				setSelectedUser(found?.user);
 				setValueQr(window.location.href);
+				const { capacitaciones, habilitaciones, procedimientos, ...currentUser } =
+					found;
+				if (Array.isArray(capacitaciones))
+					setTrainings(addId(capacitaciones || []));
+				if (Array.isArray(habilitaciones))
+					setQualifications(addId(habilitaciones || []));
+				if (Array.isArray(procedimientos))
+					setProcedures(addId(procedimientos || []));
+				setUserSiscap(currentUser);
 			}
 		}
 	};
 
-	useEffect(() => {
-		dispatch(listGeneralGuestCourses());
-		console.log("V1.5")
-	}, []);
-
-	useEffect(() => {
-		const userId = searchParams.get('userId')
-		getUserCourse(userId);
-	}, [coursesUsers]);
-
-	useEffect(() => {
-		// if (filters?.user_id) {
-		// 	dispatch(listCoursesByUser(filters));
-		// }
-	}, [filters]);
-
 	return (
-		<div
-			id="PesonalSearch"
-			style={{
-				//backgroundColor: 'rgb(243, 246, 249)',
-				minHeight: 'calc(100% - 64px)',
-			}}
-		>
+		<div id="PesonalSearch">
+			<Box bgcolor={'primary.main'} paddingY={2}>
+				<Container>
+					<Typography
+						sx={{
+							textAlign: 'center',
+							fontWeight: 'bold',
+						}}
+						color="white"
+						variant="h6"
+					>
+						Consulta - Sistema de Capacitaciones
+					</Typography>
+				</Container>
+			</Box>
+			{loadingCourse && <LinearProgress />}
+			<CustomBreadcrumbs breadcrumbs={breadcrumbs} />
+
 			<Container>
 				<Box
 					sx={{
 						minHeight: '100%',
-						padding: '24px',
-						backgroundColor: 'white.main',
-						borderRadius: '10px',
+						paddingBottom: 1,
 					}}
 				>
-					<div>
-						<Typography
-							sx={{
-								textAlign: 'center',
-								fontWeight: 'bold',
-								marginBottom: 4,
-							}}
-							color="primary"
-							variant="h6"
-							gutterBottom
-						>
-							Consulta - Sistema de Capacitaciones
-						</Typography>
-						<Box
-							sx={{
-								maxWidth: '430px',
-								margin: '0 auto 20px',
-							}}
-						>
-							{/* <Autocomplete
-								disablePortal
-								id="combo-box-demo"
-								options={users}
-								sx={{ width: '100%' }}
-								onChange={handleAutocompleteChange}
-								getOptionLabel={(option) => option?.fullName}
-								renderInput={(params) => (
-									<TextField {...params} label="Usuario" />
-								)}
-							/> */}
-						</Box>
-						{selectedUser && selectedUser?.id && (
+					{userSiscap && userSiscap?.nroDocumento && (
+						<div>
 							<Box
 								sx={{
 									width: 'fit-content',
@@ -163,59 +150,83 @@ const PesonalSearch = () => {
 										></Divider>
 									</Hidden>
 									<Grid item xs>
-										<table
-											style={{
-												fontSize: 12,
-												padding: '10px 0 10px',
-											}}
-										>
+										<table style={{ fontSize: 12 }}>
 											<tbody>
 												<tr>
 													<td style={{ color: '#0039a6' }}>
 														Nombre Completo:
 													</td>
-													<td>{selectedUser?.fullName}</td>
-												</tr>
-												<tr>
-													<td style={{ color: '#0039a6' }}>
-														Tipo de documento:
+													<td>
+														{userSiscap?.apellidosNombres}
 													</td>
-													<td>{selectedUser?.document_type}</td>
 												</tr>
 												<tr>
 													<td style={{ color: '#0039a6' }}>
 														Documento de identidad:
 													</td>
-													<td>{selectedUser?.document}</td>
+													<td>{userSiscap?.nroDocumento}</td>
 												</tr>
 												<tr>
 													<td style={{ color: '#0039a6' }}>
 														Cargo:
 													</td>
+													<td>{userSiscap?.puesto}</td>
+												</tr>
+												<tr>
+													<td style={{ color: '#0039a6' }}>
+														Servicio:
+													</td>
+													<td>{userSiscap?.servicio}</td>
+												</tr>
+												<tr>
+													<td style={{ color: '#0039a6' }}>
+														Días en la organización:
+													</td>
 													<td>
-														{Array.isArray(
-															selectedUser?.charges
-														) &&
-															selectedUser?.charges[0]
-																?.name}
+														{userSiscap?.days_in_organization ||
+															0}
 													</td>
 												</tr>
 												<tr>
 													<td style={{ color: '#0039a6' }}>
-														Correo electrónico:
+														Casco:
 													</td>
-													<td>{selectedUser?.email}</td>
+													<td>
+														<div>
+															<HelmetSvg
+																fillColor={
+																	userSiscap?.helmet
+																}
+															/>
+														</div>
+													</td>
 												</tr>
 											</tbody>
 										</table>
 									</Grid>
 								</Grid>
 							</Box>
-						)}
-						{/* {selectedUser && selectedUser?.id && (
-							<ResultPersonalTable courses={courses} />
-						)} */}
-					</div>
+							<Grid spacing={4} container>
+								<Grid xs={12} item>
+									<Typography gutterBottom>Capacitaciones</Typography>
+									<TrainingTable trainings={trainings} />
+								</Grid>
+								<Grid xs={12} item>
+									<Typography gutterBottom>Habilitaciones</Typography>
+									<QualificationsTable
+										qualifications={qualifications}
+									/>
+								</Grid>
+								<Grid xs={12} item>
+									<Typography gutterBottom>Procedimientos</Typography>
+									<ProceduresTable procedures={procedures} />
+								</Grid>
+							</Grid>
+						</div>
+					)}
+					{!loadingCourse && !userSiscap?.nroDocumento && (
+						<div>Usuario no encontrado</div>
+					)}
 				</Box>
 			</Container>
 		</div>

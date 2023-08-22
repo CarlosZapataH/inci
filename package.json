@@ -11,7 +11,7 @@
 		"webpack-dev-server": "webpack-dev-server",
 		"dev": "webpack serve --mode=development --port 3003",
 		"prod": "SET NODE_ENV=production& webpack --mode=production",
-		"serve": "npm run prod && serve -s dist -l 8080",
+		"serve": "npm run prod && serve -s dist -l 3003",
 		"svg": "svgr -d src/components/icons src/components/icons/svgs"
 	},
 	"keywords": [],

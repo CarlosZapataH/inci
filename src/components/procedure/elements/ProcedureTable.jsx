@@ -61,7 +61,7 @@ const ProcedureTable = ({ procedures }) => {
 											color="primary"
 											size="small"
 										>
-											Ir a procedimiento
+											Ver Detalle
 										</Button>
 									</TableCell>
 								</TableRow>

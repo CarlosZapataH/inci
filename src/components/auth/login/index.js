@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { setToken } from '@src/features/auth/authSlice';
-import { listGeneralGuestCourses } from '@src/features/course/courseSlice';
+
 import { Button, Grid, Typography, useMediaQuery } from '@mui/material';
+import VerifyCacheSnackbar from '@src/components/global/VerifyCacheSnackbar/VerifyCacheSnackbar.jsx';
 import './styles.scss';
 
 const Login = () => {
@@ -14,9 +15,7 @@ const Login = () => {
 	const url = process.env.REACT_APP_API + '/auth/login';
 
 	useEffect(() => {
-		//verifycache()
 		setTokenSap();
-		dispatch(listGeneralGuestCourses());
 	}, []);
 
 	const setTokenSap = () => {
@@ -50,28 +49,38 @@ const Login = () => {
 
 	return (
 		<div className="sectionLogin">
-			<Grid container alignItems="center">
+			<Grid container>
 				<Grid item xs={12} md={8}>
 					<div className="banner"></div>
 				</Grid>
 
 				<Grid item xs={12} md={4}>
-					<div className={`caption ${isMobile ? 'caption-center' : ''}`}>
-						<Typography sx={{ fontWeight: 'bold' }} variant="h4">
-							Identificarse
-						</Typography>
-						<Typography sx={{ mb: 2 }} variant="subtitle1" gutterBottom>
-							Bienvenido
-						</Typography>
-						<Button
-							variant="contained"
-							color="orange"
-							rel="noopener noreferrer"
-							href={url}
-							disableElevation
-						>
-							Iniciar de sesión
-						</Button>
+					<VerifyCacheSnackbar />
+					<div
+						style={{
+							height: '100%',
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'center',
+						}}
+					>
+						<div className={`caption ${isMobile ? 'caption-center' : ''}`}>
+							<Typography sx={{ fontWeight: 'bold' }} variant="h4">
+								Identificarse
+							</Typography>
+							<Typography sx={{ mb: 2 }} variant="subtitle1" gutterBottom>
+								Bienvenido
+							</Typography>
+							<Button
+								variant="contained"
+								color="orange"
+								rel="noopener noreferrer"
+								href={url}
+								disableElevation
+							>
+								Iniciar de sesión
+							</Button>
+						</div>
 					</div>
 				</Grid>
 			</Grid>

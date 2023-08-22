@@ -18,10 +18,12 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import ConfipetrolLogo from '@src/images/confipetrol-logo.png';
+import ConfipetrolMobileLogo from '@src/images/confipetrol-logo-mobile.png';
 import { Link } from 'react-router-dom';
 import { esES } from '@mui/material/locale';
 import CompanySelect from '@src/components/global/CompanySelect/CompanySelect.jsx';
 import AvatarMenu from '@src/components/global/AvatarMenu/AvatarMenu.jsx';
+import { useMediaQuery } from '@mui/material';
 
 const defaultTheme = createTheme(
 	{
@@ -92,6 +94,7 @@ function ResponsiveDrawer(props) {
 	);
 
 	const container = window !== undefined ? () => window().document.body : undefined;
+	const isMobile = useMediaQuery(defaultTheme.breakpoints.down('sm'));
 
 	return (
 		<ThemeProvider theme={defaultTheme}>
@@ -114,21 +117,28 @@ function ResponsiveDrawer(props) {
 								alignItems: 'center',
 							}}
 						>
-							<div className="box-left">
+							<div
+								className="box-left"
+								style={{ display: 'flex', alignItems: 'center' }}
+							>
 								<IconButton
 									color="inherit"
 									aria-label="open drawer"
 									edge="start"
 									onClick={handleDrawerToggle}
-									sx={{ mr: 2, display: { sm: 'none' } }}
+									sx={{ mr: 1, display: { sm: 'none' } }}
 								>
 									<MenuIcon />
 								</IconButton>
-								<Link to="/dashboard">
+								<Link to="/dashboard" style={{ display: 'block' }}>
 									<img
-										style={{ height: '50px' }}
+										style={{ height: isMobile ? '44px' : '50px' }}
 										className="confi-logo"
-										src={ConfipetrolLogo}
+										src={
+											isMobile
+												? ConfipetrolMobileLogo
+												: ConfipetrolLogo
+										}
 										alt="confipetrol-logo"
 									/>
 								</Link>

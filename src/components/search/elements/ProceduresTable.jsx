@@ -13,7 +13,7 @@ const ProceduresTable = ({ procedures }) => {
 			width: 300,
 			sortable: false,
 		},
-		{ field: 'subArea', headerName: 'Subarea', width: 250, sortable: false },
+		{ field: 'subArea', headerName: 'Subárea', width: 250, sortable: false },
 		// { field: 'horas', headerName: 'Horas', width: 130, sortable: false },
 		// { field: 'tipo', headerName: 'Tipo', width: 130, sortable: false },
 		// {

@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import QRCode from 'react-qr-code';
-import { listUsers, listCoursesByUser } from '@src/features/course/courseSlice';
+import { listUsers } from '@src/features/course/courseSlice';
 import SearchTabs from '@src/components/search/elements/SearchTabs.jsx';
 import CustomBreadcrumbs from '@src/components/global/CustomBreadcrumbs/index.jsx';
-import ResultPersonalTable from '@src/components/search/elements/ResultPersonalTable.jsx';
 import { getCourseSiscapByUser } from '@src/features/course/service/course.js';
-
 import TrainingTable from '@src/components/search/elements/TrainingTable.jsx';
 import QualificationsTable from '@src/components/search/elements/QualificationsTable.jsx';
 import ProceduresTable from '@src/components/search/elements/ProceduresTable.jsx';
@@ -16,7 +14,6 @@ import UpdateUserDialog from '@src/components/search/elements/UpdateUserDialog.j
 import {
 	Autocomplete,
 	Box,
-	CircularProgress,
 	Container,
 	Divider,
 	Grid,

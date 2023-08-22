@@ -16,7 +16,7 @@ export default function registerServiceWorker() {
        * only on the updated
        */
       if (event.isUpdate) {
-        if (confirm(`New app update is available!. Click OK to refresh`)) {
+        if (confirm(`¡La nueva actualización de la aplicación está disponible!. Haga clic en Aceptar para actualizar`)) {
           window.location.reload();
         }
       }
