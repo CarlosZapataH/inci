@@ -21,6 +21,7 @@ import ConfipetrolLogo from '@src/images/confipetrol-logo.png';
 import { Link } from 'react-router-dom';
 import { esES } from '@mui/material/locale';
 import CompanySelect from '@src/components/global/CompanySelect/CompanySelect.jsx';
+import AvatarMenu from '@src/components/global/AvatarMenu/AvatarMenu.jsx';
 
 const defaultTheme = createTheme(
 	{
@@ -132,9 +133,14 @@ function ResponsiveDrawer(props) {
 									/>
 								</Link>
 							</div>
-							<div className="box-right">
+							<Box
+								className="box-right"
+								display={'flex'}
+								alignItems={'center'}
+							>
 								<CompanySelect />
-							</div>
+								<AvatarMenu />
+							</Box>
 						</Box>
 					</Toolbar>
 				</AppBar>

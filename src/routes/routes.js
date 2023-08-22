@@ -10,6 +10,7 @@ import ProcedureSearchPage from '@src/pages/procedure/search/ProcedureSearch';
 import ProcedureUploadPage from '@src/pages/procedure/upload/ProcedureUpload';
 import PersonalGuestPage from '@src/pages/guest/personal/PersonalGuest.js';
 import ProcedureDetailPage from '@src/pages/procedure/detail/ProcedureDetailPage.js';
+import UserPermissionsPage from '@src/pages/user/permissions/UserPermissions.js';
 
 const router = createBrowserRouter([
 	{
@@ -67,6 +68,10 @@ const router = createBrowserRouter([
 			{
 				path: '/procedure/:procedureId/detail',
 				element: <ProcedureDetailPage />,
+			},
+			{
+				path: '/user/permissions',
+				element: <UserPermissionsPage />,
 			},
 		],
 	},

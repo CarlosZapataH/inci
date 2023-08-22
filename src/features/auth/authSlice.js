@@ -26,6 +26,14 @@ const getAuthorizedCompanies = (data) => {
 	return null;
 };
 
+const getUserData = (response) => {
+	const user = { ...response?.user };
+	if (user?.hasOwnProperty('companies')) {
+		delete user['companies'];
+	}
+	return user;
+};
+
 const authSlice = createSlice({
 	name: 'auth',
 	initialState,
@@ -89,12 +97,13 @@ const authSlice = createSlice({
 			})
 			.addCase(checkSession.fulfilled, (state, action) => {
 				state.companies = getAuthorizedCompanies(action?.payload);
+				state.user = getUserData(action?.payload);
 				state.isAuthenticated = true;
 				state.status = 'authenticated';
 			})
 			.addCase(checkSession.rejected, (state, action) => {
 				state.isAuthenticated = false;
-				state.status = 'not-authenticated';
+				(state.user = null), (state.status = 'not-authenticated');
 			});
 	},
 });
