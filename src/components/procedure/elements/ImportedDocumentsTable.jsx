@@ -13,8 +13,8 @@ import { Chip } from '@mui/material';
 
 const columns = [
 	{ id: 'procedure', label: 'Procedimiento', minWidth: 170, align: 'left' },
-	{ id: 'service', label: 'Servicio', minWidth: 100 },
-	{ id: 'charge', label: 'Cargo', minWidth: 100 },
+	{ id: 'management_code', label: 'Gerencia', minWidth: 100 },
+	{ id: 'service_code', label: 'Servicio', minWidth: 100 },
 	{ id: 'status', label: 'Estado', minWidth: 100 },
 ];
 
@@ -72,16 +72,15 @@ const ImportedDocumentsTable = ({ procedures }) => {
 								return (
 									<TableRow
 										hover
-										role="checkbox"
 										tabIndex={-1}
 										key={index + '-TableRow'}
 									>
-										<TableCell>{row?.procedure}</TableCell>
+										<TableCell>{row?.procedure_code}</TableCell>
 										<TableCell align="center">
-											{row?.service}
+											{row?.management_code}
 										</TableCell>
 										<TableCell align="center">
-											{row?.charge}
+											{row?.service_code}
 										</TableCell>
 										<TableCell align="center">
 											{getIconStatus(row)}

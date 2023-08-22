@@ -26,6 +26,7 @@ const ProcedureSearch = () => {
 	const charges = useSelector((state) => state.security.charges);
 	const costCenter = useSelector((state) => state.security.costCenter);
 	const [procedures, setProcedures] = useState([]);
+	const [isMounted, setIsMounted] = useState(true);
 	const [loadingProcedures, setLoadingProcedures] = useState(false);
 
 	const [filters, setFilters] = useState({
@@ -68,7 +69,7 @@ const ProcedureSearch = () => {
 					codigoProcedimiento: (procedure?.codigoProcedimiento || '').trim(),
 				}));
 			}
-			setProcedures(procedimientos);
+			if (isMounted) setProcedures(procedimientos);
 		} catch (error) {
 			showValidationErrors(error);
 		} finally {
@@ -80,11 +81,10 @@ const ProcedureSearch = () => {
 		dispatch(listCharges());
 		dispatch(listCostCenter());
 		getProcedures();
+		return () => {
+			setIsMounted(false);
+		};
 	}, []);
-
-	// useEffect(() => {
-	// 	dispatch(listProcedures(filters));
-	// }, [filters]);
 
 	return (
 		<div>

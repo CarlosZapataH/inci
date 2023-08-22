@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import moment from 'moment';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -7,13 +7,27 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Box, Button } from '@mui/material';
+import { Box, Button, TablePagination } from '@mui/material';
 import { Link } from 'react-router-dom';
 
+const rowsPerPageOptions = [5, 10, 20];
+
 const ProcedureTable = ({ procedures }) => {
-	const formatDate = (date) => {
-		return moment(date).format('DD-MM-YYYY');
+	const [page, setPage] = useState(0);
+	const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageOptions[1]);
+
+	const handleChangePage = (event, newPage) => {
+		setPage(newPage);
 	};
+
+	const handleChangeRowsPerPage = (event) => {
+		setRowsPerPage(parseInt(event.target.value, 10));
+		setPage(0);
+	};
+
+	const dataSliceStart = page * rowsPerPage;
+	const dataSliceEnd = dataSliceStart + rowsPerPage;
+	const displayedData = procedures.slice(dataSliceStart, dataSliceEnd);
 	return (
 		<Box sx={{ overflow: 'auto' }}>
 			<Box sx={{ width: '100%', display: 'table', tableLayout: 'fixed' }}>
@@ -28,7 +42,7 @@ const ProcedureTable = ({ procedures }) => {
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{procedures.map((row, index) => (
+							{displayedData.map((row, index) => (
 								<TableRow
 									key={index + '-procedure'}
 									sx={{
@@ -55,6 +69,15 @@ const ProcedureTable = ({ procedures }) => {
 						</TableBody>
 					</Table>
 				</TableContainer>
+				<TablePagination
+					rowsPerPageOptions={rowsPerPageOptions}
+					component="div"
+					count={procedures.length}
+					rowsPerPage={rowsPerPage}
+					page={page}
+					onPageChange={handleChangePage}
+					onRowsPerPageChange={handleChangeRowsPerPage}
+				/>
 			</Box>
 		</Box>
 	);

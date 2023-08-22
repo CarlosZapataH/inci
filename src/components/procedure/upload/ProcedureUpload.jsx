@@ -41,7 +41,7 @@ const ProcedureUpload = () => {
 					<ProcedureTabs />
 					<Box p={2}>
 						<Grid container spacing={2}>
-							<Grid item xs={12} md={6}>
+							{/* <Grid item xs={12} md={6}>
 								<Box
 									p={2}
 									border={1}
@@ -74,13 +74,13 @@ const ProcedureUpload = () => {
 										<UploadXlsx />
 									</Box>
 								</Box>
-							</Grid>
-							<Grid item xs={12} md={6}>
+							</Grid> */}
+							<Grid item xs={12}>
 								<Box
 									p={2}
-									border={1}
-									borderRadius={2}
-									borderColor={'rgba(0,0,0,.12)'}
+									//border={1}
+									//borderRadius={2}
+									//borderColor={'rgba(0,0,0,.12)'}
 								>
 									<Typography
 										variant="subtitle1"
@@ -99,8 +99,8 @@ const ProcedureUpload = () => {
 										- El archivo debe tener un máximo de 50MB
 										<br />- El archivo zip debe contener unicamente
 										archivos .pdf con el siguiente formato
-										NombreDeProcedimiento + NombreDeCargo +
-										NombreDeServicio.pdf
+										codigoProcedimiento + codigoGerencia +
+										codigoServicio.pdf
 									</Typography>
 									<Box display={'flex'} flexWrap={'wrap'}>
 										<TemplateDownloadButton

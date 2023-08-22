@@ -30,7 +30,7 @@ const ProcedureDetail = () => {
 				code: procedureId,
 			});
 			setProcedure(response?.procedimiento || {});
-			loadPdfUrl(response?.data || {});
+			setPdfData(response?.procedimiento?.file?.file || null);
 		} catch (error) {
 			showValidationErrors(error);
 		} finally {
@@ -51,20 +51,6 @@ const ProcedureDetail = () => {
 		return ìtems.join(', ');
 	};
 
-	const printDate = (procedure) => {
-		if (Array.isArray(procedure?.assigns)) {
-			const date = procedure?.assigns[0]?.last_upload_file || null;
-			return date ? formatDate(date) : '';
-		}
-	};
-
-	const loadPdfUrl = (procedure) => {
-		if (Array.isArray(procedure?.assigns)) {
-			const url = procedure?.assigns[0]?.file || null;
-			if (url) setPdfData(url);
-		}
-	};
-
 	const formatDate = (date) => {
 		if (date) {
 			moment.locale('es');
@@ -81,7 +67,6 @@ const ProcedureDetail = () => {
 						borderRadius: '10px',
 						overflow: 'hidden',
 						backgroundColor: '#ffffff',
-						mb: 2,
 					}}
 				>
 					{isLoading && <LinearProgress />}
@@ -94,24 +79,12 @@ const ProcedureDetail = () => {
 						<table className="th-left">
 							<tbody>
 								<tr>
-									<th>Código de Procedimiento: </th>
+									<th>Código: </th>
 									<td>{procedure?.codigoProcedimiento}</td>
 								</tr>
 								<tr>
 									<th>Procedimiento: </th>
 									<td>{procedure?.nombreProcedimiento}</td>
-								</tr>
-								<tr>
-									<th>Registrado por: </th>
-									<td>{procedure?.user?.fullName}</td>
-								</tr>
-								<tr>
-									<th>Fecha creación: </th>
-									<td>{formatDate(procedure?.created_at)}</td>
-								</tr>
-								<tr>
-									<th>Cargo: </th>
-									<td>{printItems(procedure, 'charges')}</td>
 								</tr>
 								<tr>
 									<th>Gerencia: </th>
@@ -123,7 +96,7 @@ const ProcedureDetail = () => {
 								</tr>
 								<tr>
 									<th>Fecha asociación PDF: </th>
-									<td>{printDate(procedure)}</td>
+									<td>{formatDate(procedure?.file?.created_at)}</td>
 								</tr>
 							</tbody>
 						</table>
