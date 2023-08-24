@@ -6,7 +6,7 @@ import { checkSession } from '@src/features/auth/authSlice';
 const LoadingPage = () => {
 	return (
 		<div>
-			<h1>Loading...</h1>
+			<h1>Cargando...</h1>
 		</div>
 	);
 };
