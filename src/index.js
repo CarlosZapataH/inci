@@ -6,6 +6,8 @@ import { Provider } from 'react-redux';
 import registerServiceWorker from './serviceWorkerRegistration';
 import '@src/assets/scss/main.scss';
 
+registerServiceWorker();
+
 ReactDOM.render(
 	<React.StrictMode>
 		<Provider store={store}>
@@ -14,5 +16,3 @@ ReactDOM.render(
 	</React.StrictMode>,
 	document.getElementById('root')
 );
-
-registerServiceWorker();

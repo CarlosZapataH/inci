@@ -12,6 +12,7 @@ const initialState = {
 	isAuthenticated: false,
 	status: 'authenticating', // 'authenticated','not-authenticated', 'authenticating'
 	companies: null,
+	permissions: null,
 };
 
 const getAuthorizedCompanies = (data) => {
@@ -32,6 +33,38 @@ const getUserData = (response) => {
 		delete user['companies'];
 	}
 	return user;
+};
+
+const getPermissions = (payload) => {
+	let company = {};
+	let access = [];
+	let modules = [];
+
+	const companies = payload?.user?.companies;
+
+	if (Array.isArray(companies)) {
+		company = companies.find(
+			(company) => company.id == localStorage.getItem('company_id')
+		);
+	}
+	if (Array.isArray(company?.profiles)) {
+		company.profiles.forEach((profiles) => {
+			profiles?.modules.forEach((module) => {
+				modules.push(module);
+				module?.pages.forEach((page) => {
+					page?.activities.forEach((activity) => {
+						access.push({
+							module_name: module?.name,
+							page_name: page?.name,
+							activity_name: activity?.name,
+						});
+					});
+				});
+			});
+		});
+	}
+
+	return access;
 };
 
 const authSlice = createSlice({
@@ -98,6 +131,7 @@ const authSlice = createSlice({
 			.addCase(checkSession.fulfilled, (state, action) => {
 				state.companies = getAuthorizedCompanies(action?.payload);
 				state.user = getUserData(action?.payload);
+				state.permissions = getPermissions(action?.payload);
 				state.isAuthenticated = true;
 				state.status = 'authenticated';
 			})

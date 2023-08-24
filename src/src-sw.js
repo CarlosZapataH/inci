@@ -269,5 +269,5 @@ registerRoute(
 registerRoute(
 	({ request }) => request.method === 'GET',
 	// Estrategia de cacheo: Cache First
-	new CacheFirst()
+	new NetworkFirst()
 );
