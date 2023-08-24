@@ -10,7 +10,8 @@
 	"scripts": {
 		"webpack-dev-server": "webpack-dev-server",
 		"dev": "webpack serve --mode=development --port 3003",
-		"prod": "SET NODE_ENV=production& webpack --mode=production",
+		"prod": "NODE_ENV=production webpack --mode=production",
+		"prod:local": "SET NODE_ENV=production& webpack --mode=production",
 		"serve": "npm run prod && serve -s dist -l 3003",
 		"svg": "svgr -d src/components/icons src/components/icons/svgs"
 	},
@@ -37,6 +38,7 @@
 		"moment": "^2.29.4",
 		"pdfjs-dist": "^3.4.120",
 		"prop-types": "^15.8.1",
+		"qrcode.react": "^3.1.0",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
 		"react-pdf": "^7.3.3",

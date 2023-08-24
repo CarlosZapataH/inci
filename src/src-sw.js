@@ -210,7 +210,7 @@ registerRoute(
 	({ url }) =>
 		url.origin === 'https://hombrenuevo-api.smartrix.pe/api/v1/siscap/users' &&
 		url.method === 'GET',
-	new StaleWhileRevalidate({
+	new NetworkFirst({
 		cacheName: 'siscap-api-users',
 		plugins: [
 			new CacheableResponsePlugin({

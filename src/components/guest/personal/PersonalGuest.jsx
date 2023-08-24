@@ -178,7 +178,7 @@ const PesonalSearch = () => {
 													</td>
 													<td>{userSiscap?.servicio}</td>
 												</tr>
-												<tr>
+												{/* <tr>
 													<td style={{ color: '#0039a6' }}>
 														Días en la organización:
 													</td>
@@ -186,10 +186,10 @@ const PesonalSearch = () => {
 														{userSiscap?.days_in_organization ||
 															0}
 													</td>
-												</tr>
+												</tr> */}
 												<tr>
 													<td style={{ color: '#0039a6' }}>
-														Casco:
+														Color de casco:
 													</td>
 													<td>
 														<div>

@@ -3,13 +3,15 @@ import { useDispatch } from 'react-redux';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { setToken } from '@src/features/auth/authSlice';
 
-import { Button, Grid, Typography, useMediaQuery } from '@mui/material';
+import { Alert, Button, Grid, Snackbar, Typography, useMediaQuery } from '@mui/material';
+import { useSnackbar } from '@src/components/global/SnackbarHelper/SnackbarHelper.js';
 import VerifyCacheSnackbar from '@src/components/global/VerifyCacheSnackbar/VerifyCacheSnackbar.jsx';
 import './styles.scss';
 
 const Login = () => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
+	const { showSnackbar, SnackbarComponent } = useSnackbar();
 	const [searchParams] = useSearchParams();
 	const isMobile = useMediaQuery('(max-width: 900px)');
 	const url = process.env.REACT_APP_API + '/auth/login';
@@ -20,10 +22,19 @@ const Login = () => {
 
 	const setTokenSap = () => {
 		const tokenSap = searchParams.get('token');
+		const error = searchParams.get('error');
 		if (tokenSap) {
 			localStorage.setItem('token', tokenSap);
 			dispatch(setToken(tokenSap));
 			navigate('/dashboard');
+		}
+
+		if (error) {
+			try {
+				showSnackbar(error, 'error');
+			} catch (error) {
+				console.log(error);
+			}
 		}
 	};
 
@@ -55,7 +66,7 @@ const Login = () => {
 				</Grid>
 
 				<Grid item xs={12} md={4}>
-					<VerifyCacheSnackbar />
+					{/* <VerifyCacheSnackbar /> */}
 					<div
 						style={{
 							height: '100%',
@@ -84,6 +95,7 @@ const Login = () => {
 					</div>
 				</Grid>
 			</Grid>
+			{SnackbarComponent}
 		</div>
 	);
 };

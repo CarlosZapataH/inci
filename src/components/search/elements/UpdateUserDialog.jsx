@@ -58,7 +58,7 @@ const UpdateUserDialog = ({ helmetcolor, user, getCourses }) => {
 	return (
 		<div>
 			<Button size="small" variant="text" onClick={handleClickOpen}>
-				<EditIcon fontSize="small" /> Cambiar Casco
+				<EditIcon fontSize="small" /> Cambiar color de casco
 			</Button>
 			<Dialog open={open} onClose={handleClose} fullWidth={true} maxWidth={'xs'}>
 				{isLoading && <LinearProgress />}
@@ -68,12 +68,12 @@ const UpdateUserDialog = ({ helmetcolor, user, getCourses }) => {
 						Elige el color de tu casco
 					</DialogContentText>
 					<FormControl fullWidth size="small">
-						<InputLabel id="HelmetSelectLabel">Casco</InputLabel>
+						<InputLabel id="HelmetSelectLabel">Color de casco</InputLabel>
 						<Select
 							labelId="HelmetSelectLabel"
 							id="HelmetSelect"
 							value={helmet}
-							label="Casco"
+							label="Color de casco"
 							onChange={handleChange}
 						>
 							{helmetList.map((item, index) => {
@@ -90,7 +90,7 @@ const UpdateUserDialog = ({ helmetcolor, user, getCourses }) => {
 					</FormControl>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={handleClose}>Cancel</Button>
+					<Button onClick={handleClose}>Cancelar</Button>
 					<Button onClick={sendForm}>Guardar</Button>
 				</DialogActions>
 			</Dialog>

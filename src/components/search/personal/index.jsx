@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import QRCode from 'react-qr-code';
+//import QRCode from 'react-qr-code';
+import QRCodeReact from 'qrcode.react';
 import { listUsers } from '@src/features/course/courseSlice';
 import SearchTabs from '@src/components/search/elements/SearchTabs.jsx';
 import CustomBreadcrumbs from '@src/components/global/CustomBreadcrumbs/index.jsx';
@@ -10,10 +11,12 @@ import QualificationsTable from '@src/components/search/elements/QualificationsT
 import ProceduresTable from '@src/components/search/elements/ProceduresTable.jsx';
 import HelmetSvg from '@src/components/search/elements/HelmetSvg.jsx';
 import UpdateUserDialog from '@src/components/search/elements/UpdateUserDialog.jsx';
+import DownloadIcon from '@mui/icons-material/Download';
 
 import {
 	Autocomplete,
 	Box,
+	Button,
 	Container,
 	Divider,
 	Grid,
@@ -26,7 +29,7 @@ import { showValidationErrors } from '@src/helpers/listValidation';
 
 const breadcrumbs = [
 	{ value: '/dashboard', text: 'Inicio' },
-	{ value: '/search/personal', text: 'Búsqueda Personal' },
+	{ value: '/search/personal', text: 'Búsqueda de Personal' },
 ];
 
 const PesonalSearch = () => {
@@ -53,7 +56,7 @@ const PesonalSearch = () => {
 	const handleAutocompleteChange = (event, value) => {
 		setSelectedUser(value);
 		setFilters({ ...filters, user_id: value?.id || null });
-		setValueQr(window.location.href + '?userid=' + value?.id);
+		setValueQr(window.location.origin + '/guest/personal/' + value?.document);
 		if (value && value?.document) {
 			getCourses(value?.document);
 		}
@@ -100,16 +103,39 @@ const PesonalSearch = () => {
 		};
 		try {
 			const response = await getCourseSiscapByUser(data);
-			const { capacitaciones, habilitaciones, procedimientos, ...currentUser } =
-				response?.personas[0];
-			setUserSiscap(currentUser);
-			if (Array.isArray(capacitaciones)) setTrainings(addId(capacitaciones));
-			if (Array.isArray(habilitaciones)) setQualifications(addId(habilitaciones));
-			if (Array.isArray(procedimientos)) setProcedures(addId(procedimientos));
+			if (response && response?.personas && response?.personas[0]) {
+				const { capacitaciones, habilitaciones, procedimientos, ...currentUser } =
+					response?.personas[0];
+				setUserSiscap(currentUser);
+				if (Array.isArray(capacitaciones)) setTrainings(addId(capacitaciones));
+				if (Array.isArray(habilitaciones))
+					setQualifications(addId(habilitaciones));
+				if (Array.isArray(procedimientos)) setProcedures(addId(procedimientos));
+			} else {
+				setUserSiscap(null);
+				setTrainings([]);
+				setQualifications([]);
+				setProcedures([]);
+			}
 		} catch (error) {
 			showValidationErrors(error);
 		} finally {
 			setLoadingCourse(false);
+		}
+	};
+
+	const qrCodeRef = useRef(null);
+
+	const downloadQRCode = () => {
+		if (qrCodeRef.current) {
+			const canvas = qrCodeRef.current.querySelector('canvas');
+			const link = document.createElement('a');
+
+			canvas.toBlob((blob) => {
+				link.href = URL.createObjectURL(blob);
+				link.download = 'qr-code.png';
+				link.click();
+			});
 		}
 	};
 
@@ -159,7 +185,10 @@ const PesonalSearch = () => {
 								getOptionLabel={(option) => option?.fullName}
 								renderInput={(params) => (
 									<div>
-										<TextField {...params} label="Usuario" />
+										<TextField
+											{...params}
+											label="Nombre o documento del usuario"
+										/>
 										{loadingUser && <LinearProgress />}
 									</div>
 								)}
@@ -184,6 +213,7 @@ const PesonalSearch = () => {
 								<Grid container>
 									<Grid item xs={12} md={'auto'}>
 										<div
+											ref={qrCodeRef}
 											style={{
 												height: 'auto',
 												margin: '0 auto',
@@ -191,7 +221,7 @@ const PesonalSearch = () => {
 												width: '100%',
 											}}
 										>
-											<QRCode
+											<QRCodeReact
 												size={256}
 												style={{
 													height: 'auto',
@@ -199,9 +229,23 @@ const PesonalSearch = () => {
 													width: '100%',
 												}}
 												value={valueQr}
-												viewBox={`0 0 256 256`}
 											/>
 										</div>
+										<Box
+											display={'flex'}
+											justifyContent={'center'}
+											minHeight={'initial'}
+										>
+											<Button
+												size="small"
+												margin={'auto'}
+												variant="text"
+												onClick={downloadQRCode}
+												startIcon={<DownloadIcon />}
+											>
+												Descargar QR
+											</Button>
+										</Box>
 									</Grid>
 									<Hidden mdDown>
 										<Divider
@@ -248,7 +292,7 @@ const PesonalSearch = () => {
 													</td>
 													<td>{selectedUser?.email}</td>
 												</tr>
-												<tr>
+												{/* <tr>
 													<td style={{ color: '#0039a6' }}>
 														Días en la organización:
 													</td>
@@ -256,10 +300,10 @@ const PesonalSearch = () => {
 														{userSiscap?.days_in_organization ||
 															0}
 													</td>
-												</tr>
+												</tr> */}
 												<tr>
 													<td style={{ color: '#0039a6' }}>
-														Casco:
+														Color de casco:
 													</td>
 													<td>
 														<div>

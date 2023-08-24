@@ -49,6 +49,7 @@ const uniqueUsers = (users) => {
 			(user, index) =>
 				users.findIndex((u) => u.fullName === user.fullName) === index
 		);
+		result = result.filter((user) => !!user?.document);
 	}
 	return result;
 };

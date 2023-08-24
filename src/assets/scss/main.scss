@@ -52,3 +52,12 @@ table {
 		}
 	}
 }
+
+#PesonalSearch .long-text-cell {
+	white-space: initial;
+	.MuiDataGrid-cellContent {
+		max-height: 100%;
+		box-sizing: border-box;
+		overflow: auto;
+	}
+}

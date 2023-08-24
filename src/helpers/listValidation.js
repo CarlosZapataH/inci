@@ -58,6 +58,7 @@ const showValidationErrors = (error) => {
 		errorMessage =
 			'Hubo un problema con la solicitud que enviaste. Por favor, verifica los datos e intenta nuevamente.';
 	}
+	console.error(error);
 
 	Swal.fire({
 		icon: 'warning',
