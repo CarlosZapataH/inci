@@ -68,7 +68,7 @@ function ResponsiveDrawer(props) {
 			<List>
 				{['Búsqueda'].map((text, index) => (
 					<ListItem key={text} disablePadding>
-						<ListItemButton>
+						<ListItemButton component={Link} to="/search/personal">
 							<ListItemIcon>
 								{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
 							</ListItemIcon>
@@ -81,7 +81,7 @@ function ResponsiveDrawer(props) {
 			<List>
 				{['Procedimiento'].map((text, index) => (
 					<ListItem key={text} disablePadding>
-						<ListItemButton>
+						<ListItemButton component={Link} to="/procedure/search">
 							<ListItemIcon>
 								{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
 							</ListItemIcon>

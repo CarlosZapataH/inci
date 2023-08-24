@@ -33,12 +33,12 @@ const SearchTabs = () => {
 					to="/search/personal"
 					component={Link}
 				/>
-				<Tab
+				{/* <Tab
 					label="Búsqueda General"
 					value="/search/general"
 					to="/search/general"
 					component={Link}
-				/>
+				/> */}
 			</Tabs>
 		</Box>
 	);

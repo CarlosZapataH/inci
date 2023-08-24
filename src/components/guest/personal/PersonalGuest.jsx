@@ -18,6 +18,7 @@ import {
 	LinearProgress,
 	Typography,
 } from '@mui/material';
+import HelmetTable from '@src/components/search/elements/HelmetTable';
 
 const breadcrumbs = [
 	{ value: '/login', text: 'Inicio' },
@@ -32,6 +33,7 @@ const PesonalSearch = () => {
 	const [trainings, setTrainings] = useState([]);
 	const [qualifications, setQualifications] = useState([]);
 	const [procedures, setProcedures] = useState([]);
+	const [helmetHistory, setHelmetHistory] = useState([]);
 
 	useEffect(() => {
 		getUsers();
@@ -65,14 +67,21 @@ const PesonalSearch = () => {
 			);
 			if (found) {
 				setValueQr(window.location.href);
-				const { capacitaciones, habilitaciones, procedimientos, ...currentUser } =
-					found;
+				const {
+					capacitaciones,
+					habilitaciones,
+					procedimientos,
+					helmet_history,
+					...currentUser
+				} = found;
 				if (Array.isArray(capacitaciones))
 					setTrainings(addId(capacitaciones || []));
 				if (Array.isArray(habilitaciones))
 					setQualifications(addId(habilitaciones || []));
 				if (Array.isArray(procedimientos))
 					setProcedures(addId(procedimientos || []));
+				if (Array.isArray(helmet_history))
+					setHelmetHistory(addId(helmet_history || []));
 				setUserSiscap(currentUser);
 			}
 		}
@@ -207,6 +216,12 @@ const PesonalSearch = () => {
 								</Grid>
 							</Box>
 							<Grid spacing={4} container>
+								<Grid xs={12} item>
+									<Typography>
+										Registro de cambios en el color del casco
+									</Typography>
+									<HelmetTable helmets={helmetHistory} />
+								</Grid>
 								<Grid xs={12} item>
 									<Typography gutterBottom>Capacitaciones</Typography>
 									<TrainingTable trainings={trainings} />

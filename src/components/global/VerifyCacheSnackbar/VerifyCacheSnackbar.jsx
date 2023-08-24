@@ -33,8 +33,9 @@ const VerifyCacheSnackbar = () => {
 						severity: 'success',
 					});
 				} else {
+					// 'Función offline no disponible. Por favor, actualiza la página.'
 					setConfigSnackbar({
-						text: 'Función offline no disponible. Por favor, actualiza la página.',
+						text: 'Proceso de carga completado.',
 						severity: 'info',
 					});
 				}

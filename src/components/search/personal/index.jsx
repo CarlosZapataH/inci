@@ -12,6 +12,7 @@ import ProceduresTable from '@src/components/search/elements/ProceduresTable.jsx
 import HelmetSvg from '@src/components/search/elements/HelmetSvg.jsx';
 import UpdateUserDialog from '@src/components/search/elements/UpdateUserDialog.jsx';
 import DownloadIcon from '@mui/icons-material/Download';
+import HelmetTable from '@src/components/search/elements/HelmetTable.jsx';
 
 import {
 	Autocomplete,
@@ -45,6 +46,7 @@ const PesonalSearch = () => {
 	const [trainings, setTrainings] = useState([]);
 	const [qualifications, setQualifications] = useState([]);
 	const [procedures, setProcedures] = useState([]);
+	const [helmetHistory, setHelmetHistory] = useState([]);
 
 	const [filters, setFilters] = useState({
 		page: 1,
@@ -104,18 +106,26 @@ const PesonalSearch = () => {
 		try {
 			const response = await getCourseSiscapByUser(data);
 			if (response && response?.personas && response?.personas[0]) {
-				const { capacitaciones, habilitaciones, procedimientos, ...currentUser } =
-					response?.personas[0];
+				const {
+					capacitaciones,
+					habilitaciones,
+					procedimientos,
+					helmet_history,
+					...currentUser
+				} = response?.personas[0];
 				setUserSiscap(currentUser);
 				if (Array.isArray(capacitaciones)) setTrainings(addId(capacitaciones));
 				if (Array.isArray(habilitaciones))
 					setQualifications(addId(habilitaciones));
 				if (Array.isArray(procedimientos)) setProcedures(addId(procedimientos));
+				if (Array.isArray(helmet_history))
+					setHelmetHistory(addId(helmet_history));
 			} else {
 				setUserSiscap(null);
 				setTrainings([]);
 				setQualifications([]);
 				setProcedures([]);
+				setHelmetHistory([]);
 			}
 		} catch (error) {
 			showValidationErrors(error);
@@ -331,6 +341,12 @@ const PesonalSearch = () => {
 						)}
 						{selectedUser && selectedUser?.id && (
 							<Grid spacing={4} container>
+								<Grid xs={12} item>
+									<Typography>
+										Registro de cambios en el color del casco
+									</Typography>
+									<HelmetTable helmets={helmetHistory} />
+								</Grid>
 								<Grid xs={12} item>
 									<Typography>Capacitaciones</Typography>
 									<TrainingTable trainings={trainings} />

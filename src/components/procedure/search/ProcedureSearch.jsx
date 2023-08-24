@@ -106,7 +106,7 @@ const ProcedureSearch = () => {
 							borderRadius: '0 0 10px 10px',
 						}}
 					>
-						<Grid spacing={2} sx={{ mb: 4 }} container>
+						{/* <Grid spacing={2} sx={{ mb: 4 }} container>
 							<Grid xs={12} md={4} item>
 								<Autocomplete
 									size="small"
@@ -162,7 +162,7 @@ const ProcedureSearch = () => {
 									fullWidth
 								/>
 							</Grid>
-						</Grid>
+						</Grid> */}
 						<ProcedureTable procedures={procedures} />
 					</Box>
 				</Box>
