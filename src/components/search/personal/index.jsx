@@ -13,6 +13,7 @@ import HelmetSvg from '@src/components/search/elements/HelmetSvg.jsx';
 import UpdateUserDialog from '@src/components/search/elements/UpdateUserDialog.jsx';
 import DownloadIcon from '@mui/icons-material/Download';
 import HelmetTable from '@src/components/search/elements/HelmetTable.jsx';
+import UsersDownloadButton from '@src/components/search/elements/UsersDownloadButton.jsx';
 
 import {
 	Autocomplete,
@@ -166,6 +167,9 @@ const PesonalSearch = () => {
 				>
 					{loadingCourse && <LinearProgress />}
 					<Box padding={4}>
+						<Box display={'flex'} justifyContent={'flex-end'} marginBottom={2}>
+							<UsersDownloadButton />
+						</Box>
 						<Typography
 							sx={{
 								textAlign: 'center',

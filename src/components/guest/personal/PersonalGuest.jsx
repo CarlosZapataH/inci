@@ -19,6 +19,7 @@ import {
 	Typography,
 } from '@mui/material';
 import HelmetTable from '@src/components/search/elements/HelmetTable';
+import { getCourseSiscapByUser } from '@src/features/course/service/course';
 
 const breadcrumbs = [
 	{ value: '/login', text: 'Inicio' },
@@ -35,20 +36,35 @@ const PesonalSearch = () => {
 	const [procedures, setProcedures] = useState([]);
 	const [helmetHistory, setHelmetHistory] = useState([]);
 
+	const [online, setOnline] = useState(navigator ? navigator.onLine : true);
+
+	function goOnline() {
+		setOnline(true);
+	}
+
+	function goOffline() {
+		setOnline(false);
+	}
+
 	useEffect(() => {
-		getUsers();
+		if (window) {
+			window.addEventListener('online', goOnline);
+			window.addEventListener('offline', goOffline);
+		}
+		verifyConnection();
+		return () => {
+			if (window) {
+				window.removeEventListener('online', goOnline);
+				window.removeEventListener('offline', goOffline);
+			}
+		};
 	}, []);
 
-	const getUsers = async () => {
-		try {
-			setLoadingCourse(true);
-			const response = await serviceUsers.listUsers();
-			const personas = response?.personas || null;
-			getCourses(personas);
-		} catch (error) {
-			showValidationErrors(error);
-		} finally {
-			setLoadingCourse(false);
+	const verifyConnection = () => {
+		if (online) {
+			getUser();
+		} else {
+			getUsers();
 		}
 	};
 
@@ -57,6 +73,37 @@ const PesonalSearch = () => {
 			return arr.map((item, id) => {
 				return { ...item, id };
 			});
+		}
+	};
+
+	const getUser = async () => {
+		try {
+			setLoadingCourse(true);
+			const data = {
+				Personas: [
+					{
+						Legajo: 0,
+						NroDocumento: userDocument,
+					},
+				],
+			};
+			const response = await getCourseSiscapByUser(data);
+			getCourses(response?.personas || null);
+		} catch (error) {
+			getUsers();
+		} finally {
+			setLoadingCourse(false);
+		}
+	};
+
+	const getUsers = async () => {
+		try {
+			const response = await serviceUsers.listUsers();
+			getCourses(response?.personas || null);
+		} catch (error) {
+			showValidationErrors(error);
+		} finally {
+			setLoadingCourse(false);
 		}
 	};
 

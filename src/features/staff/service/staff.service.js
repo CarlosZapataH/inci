@@ -20,4 +20,15 @@ const listUsers = async (payload) => {
 	}
 };
 
-export { updateStaff, listUsers };
+const getUsersFile = async (payload) => {
+	try {
+		const { data } = await http.get('/siscap/users/download', {
+			params: { ...payload },
+		});
+		return data || null;
+	} catch (error) {
+		return Promise.reject(error);
+	}
+};
+
+export { updateStaff, listUsers, getUsersFile };

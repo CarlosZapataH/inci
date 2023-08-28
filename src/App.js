@@ -16,8 +16,6 @@ import myRoutes from './routes/routes';
 // 	});
 // }
 
-
-
 class App extends React.Component {
 	render() {
 		return <RouterProvider router={myRoutes} />;

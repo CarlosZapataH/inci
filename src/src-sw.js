@@ -208,7 +208,7 @@ registerRoute(
 
 registerRoute(
 	({ url }) =>
-		url.origin === 'https://hombrenuevo-api.smartrix.pe/api/v1/siscap/users' &&
+		url.origin === process.env.REACT_APP_API + '/siscap/users' &&
 		url.method === 'GET',
 	new NetworkFirst({
 		cacheName: 'siscap-api-users',

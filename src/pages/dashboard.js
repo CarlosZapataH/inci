@@ -16,13 +16,7 @@ const Home = () => {
 				<Link to="/search" className="box-link">
 					<div>
 						<PersonSearchIcon fontSize="large" />
-						<div>Busqueda de personal</div>
-					</div>
-				</Link>
-				<Link to="/procedure/search" className="box-link">
-					<div>
-						<ListAltIcon fontSize="large" />
-						<div>Procedimientos</div>
+						<div>Búsqueda de personal</div>
 					</div>
 				</Link>
 			</div>
