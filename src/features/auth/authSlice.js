@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import * as authService from '@src/api/auth';
+import * as authService from '@src/features/auth/service/auth.js';
 
 export const checkSession = createAsyncThunk('auth/checkSession', async () => {
 	const response = await authService.getProfile(); // Cambia la URL por la de tu API

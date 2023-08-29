@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import * as courseService from '@src/api/course';
+import * as courseService from '@src/features/course/service/course.js';
 
 export const listUsers = createAsyncThunk('course/listUsers', async () => {
 	const response = await courseService.getUsers();

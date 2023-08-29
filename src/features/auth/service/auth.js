@@ -1,4 +1,4 @@
-import { http } from './api';
+import { http } from '@src/features/api/api.js';
 
 const login = async (params) => {
 	try {

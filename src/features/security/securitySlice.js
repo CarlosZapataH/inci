@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import * as securityService from '@src/api/security';
+import * as securityService from '@src/features/security/service/security.js';
 
 export const listCharges = createAsyncThunk('security/listCharges', async () => {
 	const response = await securityService.getCharges();

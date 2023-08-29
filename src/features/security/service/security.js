@@ -1,4 +1,4 @@
-import { http } from '@src/api/api';
+import { http } from '@src/features/api/api.js';
 
 const usersActive = async (params) => {
 	try {

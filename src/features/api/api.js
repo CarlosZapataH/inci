@@ -3,7 +3,7 @@ import axios from 'axios';
 //import store from '@/store';
 
 const http = axios.create({
-	baseURL: process.env.REACT_APP_API,
+	baseURL: process.env.REACT_APP_API + '/api/v1',
 });
 
 http.interceptors.request.use((config) => {
