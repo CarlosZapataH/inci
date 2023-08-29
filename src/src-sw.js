@@ -36,7 +36,7 @@ registerRoute(navigationRoute);
 
 registerRoute(
 	({ url, request }) =>
-		url.origin === 'https://hombrenuevo-api.smartrix.pe' &&
+		url.origin === process.env.REACT_APP_API &&
 		url.pathname === '/api/v1/siscap/users' &&
 		request.method === 'GET',
 	new StaleWhileRevalidate({
