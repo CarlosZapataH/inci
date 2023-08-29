@@ -12,9 +12,10 @@ import { PersonAdd, AdminPanelSettings } from '@mui/icons-material';
 import Logout from '@mui/icons-material/Logout';
 import { useSelector } from 'react-redux';
 import { deepOrange, deepPurple } from '@mui/material/colors';
-import { Link } from 'react-router-dom';
+import { Link, redirect, useNavigate } from 'react-router-dom';
 
 export default function AccountMenu() {
+	const navigate = useNavigate();
 	const user = useSelector((state) => state.auth.user);
 	const [anchorEl, setAnchorEl] = React.useState(null);
 	const open = Boolean(anchorEl);
@@ -24,6 +25,13 @@ export default function AccountMenu() {
 	const handleClose = () => {
 		setAnchorEl(null);
 	};
+
+	const logout = () => {
+		localStorage.removeItem('token');
+		navigate('/login');
+		handleClose();
+	};
+
 	const printAvataName = () => {
 		const firstLetter = (user?.name || '').charAt(0);
 		const secondLetter = (user?.last_name_father || '').charAt(0);
@@ -97,13 +105,17 @@ export default function AccountMenu() {
 					</Typography>
 				</Box>
 				<Divider />
-				<MenuItem component={Link} to={'/user/permissions'} sx={{ paddingY: 1.5 }}>
+				<MenuItem
+					component={Link}
+					to={'/user/permissions'}
+					sx={{ paddingY: 1.5 }}
+				>
 					<ListItemIcon>
 						<AdminPanelSettings fontSize="small" />
 					</ListItemIcon>
 					<Typography variant="body2">Ver Permisos</Typography>
 				</MenuItem>
-				<MenuItem onClick={handleClose} sx={{ paddingY: 1.5 }}>
+				<MenuItem onClick={logout} sx={{ paddingY: 1.5 }}>
 					<ListItemIcon>
 						<Logout fontSize="small" />
 					</ListItemIcon>
