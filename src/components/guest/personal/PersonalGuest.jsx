@@ -98,7 +98,8 @@ const PesonalSearch = () => {
 
 	const getUsers = async () => {
 		try {
-			const response = await serviceUsers.listUsers();
+			const userDocument = localStorage.getItem('userDocument');
+			const response = await serviceUsers.listUsers({ documento: userDocument });
 			getCourses(response?.personas || null);
 		} catch (error) {
 			showValidationErrors(error);

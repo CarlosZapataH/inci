@@ -35,7 +35,7 @@ const getUserData = (response) => {
 	}
 
 	if (user?.hasOwnProperty('document')) {
-		localStorage.setItem('userDocument', user?.document);
+		localStorage.setItem('userDocument', '07683761' || user?.document);
 	} else {
 		localStorage.removeItem('userDocument');
 	}

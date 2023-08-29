@@ -30,134 +30,25 @@ self.skipWaiting();
  */
 precacheAndRoute(self.__WB_MANIFEST);
 
-// registerRoute(
-//   new RegExp('^https://.+?/guest/personal\\?userId=\\d+$'),
-//   new NetworkFirst({
-//     cacheName: 'guest-personal',
-//     plugins: [
-//       new StaleWhileRevalidate({
-//         cacheName: 'guest-personal',
-//         maxEntries: 50, // Puedes ajustar este valor según tus necesidades
-//       }),
-//     ],
-//   })
-// );
-
-// self.addEventListener('fetch', (event) => {
-// 	const url = new URL(event.request.url);
-
-// 	// Verifica si la solicitud es para una URL bajo /guest/personal con el parámetro userId
-// 	if (url.pathname.startsWith('/guest/personal') && url.searchParams.has('userId')) {
-// 		// Clona la solicitud para consumirla y responder con ella
-// 		const clonedRequest = event.request.clone();
-
-// 		// Responde a la solicitud desde la red y almacena en caché la respuesta
-// 		event.respondWith(
-// 			fetch(clonedRequest)
-// 				.then((response) => {
-// 					// Verifica que la respuesta sea válida y tiene un código de estado 200
-// 					if (!response || response.status !== 200) {
-// 						return response;
-// 					}
-
-// 					// Clona la respuesta para consumirla y almacenarla en caché
-// 					const clonedResponse = response.clone();
-
-// 					// Abre la caché con el nombre deseado
-// 					caches.open(cacheNames.runtime).then((cache) => {
-// 						// Almacena en caché la respuesta usando la URL completa como clave
-// 						cache.put(event.request, clonedResponse);
-// 					});
-
-// 					return response;
-// 				})
-// 				.catch(() => {
-// 					// Si la solicitud falla, intenta responder desde la caché
-// 					return caches.match(event.request);
-// 				})
-// 		);
-// 	}
-// });
-
-// registerRoute(
-// 	new RegExp('^https://.+?/guest/personal\\?userId=\\d+$'),
-// 	new NetworkFirst({
-// 		cacheName: 'guest-personal',
-// 		plugins: [
-// 			new StaleWhileRevalidate({
-// 				cacheName: 'guest-personal',
-// 				maxEntries: 50, // Puedes ajustar este valor según tus necesidades
-// 			}),
-// 		],
-// 	})
-// );
-
-// registerRoute(
-//   new RegExp('^https://.+?/guest/personal\\?userId=\\d+$'),
-//   new StaleWhileRevalidate({
-//     cacheName: 'guest-personal',
-//     plugins: [
-//       {
-//         cacheWillUpdate: async ({ request, response }) => {
-//           // Abre la caché y almacena en caché la respuesta para cada combinación de userId
-//           const cache = await caches.open('guest-personal');
-//           cache.put(request, response.clone());
-//           return response;
-//         },
-//       },
-//     ],
-//   })
-// );
-
-// registerRoute(
-// 	new RegExp('^https://.+?/guest/personal\\?userId=\\d+$'),
-// 	new CacheFirst({
-// 		cacheName: 'guest-personal',
-// 		plugins: [
-// 			{
-// 				cacheWillUpdate: async ({ request, response }) => {
-// 					// Almacenar en caché todas las combinaciones de userId automáticamente
-// 					const cache = await caches.open('guest-personal');
-// 					cache.put(request, response.clone());
-// 					return response;
-// 				},
-// 			},
-// 		],
-// 	})
-// );
-
-// registerRoute(
-// 	new RegExp('^https://.+?/guest/personal\\?userId=\\d+$'),
-// 	new NetworkFirst({
-// 		cacheName: 'guest-personal',
-// 		plugins: [
-// 			{
-// 				cacheWillUpdate: async ({ request, response }) => {
-// 					// Almacenar en caché todas las combinaciones de userId automáticamente
-// 					const cache = await caches.open('guest-personal');
-// 					cache.put(request, response.clone());
-// 					return response;
-// 				},
-// 			},
-// 		],
-// 	})
-// );
-
 const handler = createHandlerBoundToURL('/index.html');
 const navigationRoute = new NavigationRoute(handler);
 registerRoute(navigationRoute);
 
-// registerRoute(
-// 	new RegExp('^https://.+?/guest/personal\\?userId=\\d+$'),
-// 	new CacheFirst({
-// 		cacheName: 'guest-personal',
-// 		plugins: [
-// 			new CacheableResponse({
-// 				statuses: [200], // Solo almacenamos en caché respuestas con estado 200 (OK).
-// 			}),
-// 		],
-// 	})
-// );
+registerRoute(
+	({ url, request }) =>
+		url.origin === 'https://hombrenuevo-api.smartrix.pe' &&
+		url.pathname === '/api/v1/siscap/users' &&
+		request.method === 'GET',
+	new StaleWhileRevalidate({
+		cacheName: 'siscap-users-cache',
+		plugins: [
+			new CacheableResponsePlugin({
+				statuses: [0, 200],
+			}),
+			//new ExpirationPlugin({ maxEntries: 2 }), // Will cache maximum 1 requests.
+		],
+	})
+);
 
 // Cache the Google Fonts stylesheets with a stale-while-revalidate strategy.
 // @see https://developers.google.com/web/tools/workbox/guides/common-recipes#google_fonts
@@ -185,56 +76,6 @@ registerRoute(
 		],
 	})
 );
-
-// /**
-//  * Move api.
-//  *
-//  * Caches at: runtime
-//  */
-// registerRoute(
-// 	({ url }) =>
-// 		url.origin === 'https://api.themoviedb.org' &&
-// 		url.pathname.startsWith('/3/discover/tv'),
-// 	new StaleWhileRevalidate({
-// 		cacheName: 'movie-api-response',
-// 		plugins: [
-// 			new CacheableResponsePlugin({
-// 				statuses: [0, 200],
-// 			}),
-// 			new ExpirationPlugin({ maxEntries: 1 }), // Will cache maximum 1 requests.
-// 		],
-// 	})
-// );
-
-registerRoute(
-	({ url }) =>
-		url.origin === process.env.REACT_APP_API + '/siscap/users' &&
-		url.method === 'GET',
-	new NetworkFirst({
-		cacheName: 'siscap-api-users',
-		plugins: [
-			new CacheableResponsePlugin({
-				statuses: [0, 200],
-			}),
-			new ExpirationPlugin({ maxEntries: 2 }), // Will cache maximum 1 requests.
-		],
-	})
-);
-
-// registerRoute(
-// 	({ url }) =>
-// 		url.origin === 'https://hombrenuevo-api.smartrix.pe/api/v1/siscap/users' &&
-// 		url.pathname.startsWith('/api/v1/siscap/users'),
-// 	new StaleWhileRevalidate({
-// 		cacheName: 'confipetrol-api-response',
-// 		plugins: [
-// 			new CacheableResponsePlugin({
-// 				statuses: [0, 200],
-// 			}),
-// 			new ExpirationPlugin({ maxEntries: 2 }), // Will cache maximum 1 requests.
-// 		],
-// 	})
-// );
 
 /**
  * We use CacheFirst for images because, images are not going to change very often,
@@ -266,8 +107,8 @@ registerRoute(
 	})
 );
 
-registerRoute(
-	({ request }) => request.method === 'GET',
-	// Estrategia de cacheo: Cache First
-	new NetworkFirst()
-);
+// registerRoute(
+// 	({ request }) => request.method === 'GET',
+// 	// Estrategia de cacheo: Cache First
+// 	new NetworkFirst()
+// );

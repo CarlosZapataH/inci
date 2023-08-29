@@ -15,8 +15,7 @@ const VerifyCacheSnackbar = () => {
 	const getUsers = async () => {
 		try {
 			setLoading(true);
-			//const userDocument = localStorage.getItem('userDocument');
-			const userDocument = '07683761';
+			const userDocument = localStorage.getItem('userDocument');
 			const currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
 
 			await serviceUsers.listUsers({ documento: userDocument });
