@@ -1,7 +1,8 @@
-import { Alert, LinearProgress, Snackbar, Typography } from '@mui/material';
+import { Alert, Button, LinearProgress, Snackbar, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import * as serviceUsers from '@src/features/staff/service/staff.service.js';
 import { showValidationErrors } from '@src/helpers/listValidation';
+import moment from 'moment';
 
 const VerifyCacheSnackbar = () => {
 	const [open, setOpen] = useState(false);
@@ -14,12 +15,38 @@ const VerifyCacheSnackbar = () => {
 	const getUsers = async () => {
 		try {
 			setLoading(true);
-			await serviceUsers.listUsers();
-			verifycache();
+			//const userDocument = localStorage.getItem('userDocument');
+			const userDocument = '07683761';
+			const currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
+
+			await serviceUsers.listUsers({ documento: userDocument });
+			localStorage.setItem('lastUpdate', currentDate);
 		} catch (error) {
 			showValidationErrors(error);
 		} finally {
 			setLoading(false);
+		}
+	};
+
+	const verifyLastUpdate = () => {
+		moment.locale('es');
+		const lastUpdate = localStorage.getItem('lastUpdate');
+
+		if (lastUpdate) {
+			const currentDate = moment().format('YYYY-MM-DD');
+			const lastDate = moment(lastUpdate);
+			const same = lastDate.isSame(currentDate, 'day');
+			if (same) {
+				setConfigSnackbar({
+					text: 'Los usuarios se han descargado recientemente. <br> ¿Desea realizar una actualización?',
+					severity: 'info',
+				});
+				setOpen(true);
+			} else {
+				getUsers();
+			}
+		} else {
+			getUsers();
 		}
 	};
 
@@ -59,7 +86,7 @@ const VerifyCacheSnackbar = () => {
 	};
 
 	useEffect(() => {
-		getUsers();
+		verifyLastUpdate();
 	}, []);
 
 	return (
@@ -72,13 +99,21 @@ const VerifyCacheSnackbar = () => {
 					</Typography>
 				</>
 			)}
-			<Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+			<Snackbar open={open} autoHideDuration={20000} onClose={handleClose}>
 				<Alert
 					onClose={handleClose}
 					severity={configSnackbar?.severity}
 					sx={{ width: '100%' }}
 				>
-					{configSnackbar?.text}
+					<div dangerouslySetInnerHTML={{ __html: configSnackbar?.text }} />
+					<Button
+						sx={{ marginX: 1 }}
+						variant="outlined"
+						onClick={getUsers}
+						size="small"
+					>
+						Actualizar
+					</Button>
 				</Alert>
 			</Snackbar>
 		</div>

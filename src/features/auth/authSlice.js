@@ -29,9 +29,17 @@ const getAuthorizedCompanies = (data) => {
 
 const getUserData = (response) => {
 	const user = { ...response?.user };
+
 	if (user?.hasOwnProperty('companies')) {
 		delete user['companies'];
 	}
+
+	if (user?.hasOwnProperty('document')) {
+		localStorage.setItem('userDocument', user?.document);
+	} else {
+		localStorage.removeItem('userDocument');
+	}
+
 	return user;
 };
 
