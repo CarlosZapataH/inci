@@ -28,6 +28,7 @@ import {
 	Typography,
 } from '@mui/material';
 import { showValidationErrors } from '@src/helpers/listValidation';
+import { checkPermissions } from '@src/features/auth/authSelector';
 
 const breadcrumbs = [
 	{ value: '/dashboard', text: 'Inicio' },
@@ -36,6 +37,15 @@ const breadcrumbs = [
 
 const PesonalSearch = () => {
 	const dispatch = useDispatch();
+
+	const hasPermission = useSelector((state) =>
+		checkPermissions(state)(
+			'busquedaPersonal',
+			'busquedaPersonal',
+			'CambiarColorCasco'
+		)
+	);
+
 	const users = useSelector((state) => state.course.users);
 	const courses = useSelector((state) => state.course.coursesByUser);
 	const [selectedUser, setSelectedUser] = useState(null);
@@ -167,7 +177,11 @@ const PesonalSearch = () => {
 				>
 					{loadingCourse && <LinearProgress />}
 					<Box padding={4}>
-						<Box display={'flex'} justifyContent={'flex-end'} marginBottom={2}>
+						<Box
+							display={'flex'}
+							justifyContent={'flex-end'}
+							marginBottom={2}
+						>
 							<UsersDownloadButton />
 						</Box>
 						<Typography
@@ -331,14 +345,18 @@ const PesonalSearch = () => {
 												</tr>
 											</tbody>
 										</table>
-
-										<Box display={'flex'} justifyContent={'flex-end'}>
-											<UpdateUserDialog
-												helmetcolor={userSiscap?.helmet}
-												user={userSiscap}
-												getCourses={getCourses}
-											/>
-										</Box>
+										{!!hasPermission && (
+											<Box
+												display={'flex'}
+												justifyContent={'flex-end'}
+											>
+												<UpdateUserDialog
+													helmetcolor={userSiscap?.helmet}
+													user={userSiscap}
+													getCourses={getCourses}
+												/>
+											</Box>
+										)}
 									</Grid>
 								</Grid>
 							</Box>
