@@ -7,12 +7,12 @@
 // You can also remove this file if you'd prefer not to use a
 // service worker, and the Workbox build step will be skipped.
 
-import { cacheNames, clients, clientsClaim } from 'workbox-core';
+import { clientsClaim } from 'workbox-core';
 import { ExpirationPlugin } from 'workbox-expiration';
 import { createHandlerBoundToURL, precacheAndRoute } from 'workbox-precaching';
 import { registerRoute, NavigationRoute } from 'workbox-routing';
 import { StaleWhileRevalidate, CacheFirst, NetworkFirst } from 'workbox-strategies';
-import { CacheableResponse, CacheableResponsePlugin } from 'workbox-cacheable-response';
+import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 
 clientsClaim();
 
@@ -28,7 +28,7 @@ self.skipWaiting();
  * This variable must be present somewhere in your service worker file,
  * even if you decide not to use precaching. See https://cra.link/PWA
  */
-precacheAndRoute(self.__WB_MANIFEST);
+precacheAndRoute(self.__WB_MANIFEST || []);
 
 const handler = createHandlerBoundToURL('/index.html');
 const navigationRoute = new NavigationRoute(handler);
@@ -39,7 +39,7 @@ registerRoute(
 		url.origin === process.env.REACT_APP_API &&
 		url.pathname === '/api/v1/siscap/users' &&
 		request.method === 'GET',
-	new StaleWhileRevalidate({
+	new NetworkFirst({
 		cacheName: 'siscap-users-cache',
 		plugins: [
 			new CacheableResponsePlugin({
