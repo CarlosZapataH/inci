@@ -1,15 +1,13 @@
 import React from 'react';
 import Layout from '@src/components/layout';
-//import PersonalSearch from '@src/components/search/personal/index.jsx';
+import UserPermissions from '@src/components/user/permissions/UserPermissions.jsx';
 
-const UserPermissions = () => {
+const UserPermissionsPage = () => {
 	return (
 		<Layout>
-			<div>
-                <h2>Permisos</h2>
-            </div>
+			<UserPermissions />
 		</Layout>
 	);
 };
 
-export default UserPermissions;
+export default UserPermissionsPage;
