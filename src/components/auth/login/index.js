@@ -14,7 +14,7 @@ const Login = () => {
 	const { showSnackbar, SnackbarComponent } = useSnackbar();
 	const [searchParams] = useSearchParams();
 	const isMobile = useMediaQuery('(max-width: 900px)');
-	const url = process.env.REACT_APP_API + '/auth/login';
+	const url = process.env.REACT_APP_API + '/api/v1/auth/login';
 
 	useEffect(() => {
 		setTokenSap();
