@@ -20,6 +20,7 @@ import {
 } from '@mui/material';
 import HelmetTable from '@src/components/search/elements/HelmetTable';
 import { getCourseSiscapByUser } from '@src/features/course/service/course';
+import moment from 'moment';
 
 const breadcrumbs = [
 	{ value: '/login', text: 'Inicio' },
@@ -135,6 +136,16 @@ const PesonalSearch = () => {
 		}
 	};
 
+	const printDayDiff = (date) => {
+		if (date) {
+			moment.locale('es');
+			const startDate = moment(date, 'DD-MM-YYYY');
+			const currentDate = moment();
+			return currentDate.diff(startDate, 'days');
+		}
+		return 0;
+	};
+
 	return (
 		<div id="PesonalSearch">
 			<Box bgcolor={'primary.main'} paddingY={2}>
@@ -235,15 +246,24 @@ const PesonalSearch = () => {
 													</td>
 													<td>{userSiscap?.servicio}</td>
 												</tr>
-												{/* <tr>
+												{userSiscap?.fechaInicio && (
+													<tr>
+														<td style={{ color: '#0039a6' }}>
+															Fecha de inicio:
+														</td>
+														<td>{userSiscap?.fechaInicio}</td>
+													</tr>
+												)}
+												<tr>
 													<td style={{ color: '#0039a6' }}>
 														Días en la organización:
 													</td>
 													<td>
-														{userSiscap?.days_in_organization ||
-															0}
+														{printDayDiff(
+															userSiscap?.fechaInicio
+														)}
 													</td>
-												</tr> */}
+												</tr>
 												<tr>
 													<td style={{ color: '#0039a6' }}>
 														Color de casco:
@@ -252,7 +272,8 @@ const PesonalSearch = () => {
 														<div>
 															<HelmetSvg
 																fillColor={
-																	userSiscap?.helmet
+																	userSiscap?.helmet ||
+																	'green'
 																}
 															/>
 														</div>

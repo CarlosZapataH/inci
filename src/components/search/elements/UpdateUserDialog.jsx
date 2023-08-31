@@ -12,11 +12,11 @@ import * as staffService from '@src/features/staff/service/staff.service.js';
 import { showValidationErrors } from '@src/helpers/listValidation';
 
 const helmetList = [
-	{ key: 'yellow', colorName: 'Amarillo', colorPrimary: '', colorSecondary: '' },
 	{ key: 'blue', colorName: 'Azul', colorPrimary: '', colorSecondary: '' },
-	{ key: 'gray', colorName: 'Plomo', colorPrimary: '', colorSecondary: '' },
-	{ key: 'white', colorName: 'Blanco', colorPrimary: '', colorSecondary: '' },
+	{ key: 'yellow', colorName: 'Amarillo', colorPrimary: '', colorSecondary: '' },
 	{ key: 'orange', colorName: 'Anaranjado', colorPrimary: '', colorSecondary: '' },
+	{ key: 'white', colorName: 'Blanco', colorPrimary: '', colorSecondary: '' },
+	{ key: 'gray', colorName: 'Plomo', colorPrimary: '', colorSecondary: '' },
 	{ key: 'green', colorName: 'Verde', colorPrimary: '', colorSecondary: '' },
 ];
 

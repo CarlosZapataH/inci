@@ -29,6 +29,7 @@ import {
 } from '@mui/material';
 import { showValidationErrors } from '@src/helpers/listValidation';
 import { checkPermissions } from '@src/features/auth/authSelector';
+import moment from 'moment';
 
 const breadcrumbs = [
 	{ value: '/dashboard', text: 'Inicio' },
@@ -158,6 +159,16 @@ const PesonalSearch = () => {
 				link.click();
 			});
 		}
+	};
+
+	const printDayDiff = (date) => {
+		if (date) {
+			moment.locale('es');
+			const startDate = moment(date, 'DD-MM-YYYY');
+			const currentDate = moment();
+			return currentDate.diff(startDate, 'days');
+		}
+		return 0;
 	};
 
 	return (
@@ -306,13 +317,7 @@ const PesonalSearch = () => {
 													<td style={{ color: '#0039a6' }}>
 														Cargo:
 													</td>
-													<td>
-														{Array.isArray(
-															selectedUser?.charges
-														) &&
-															selectedUser?.charges[0]
-																?.name}
-													</td>
+													<td>{userSiscap?.puesto}</td>
 												</tr>
 												<tr>
 													<td style={{ color: '#0039a6' }}>
@@ -320,15 +325,24 @@ const PesonalSearch = () => {
 													</td>
 													<td>{selectedUser?.email}</td>
 												</tr>
-												{/* <tr>
+												{userSiscap?.fechaInicio && (
+													<tr>
+														<td style={{ color: '#0039a6' }}>
+															Fecha de inicio:
+														</td>
+														<td>{userSiscap?.fechaInicio}</td>
+													</tr>
+												)}
+												<tr>
 													<td style={{ color: '#0039a6' }}>
 														Días en la organización:
 													</td>
 													<td>
-														{userSiscap?.days_in_organization ||
-															0}
+														{printDayDiff(
+															userSiscap?.fechaInicio
+														)}
 													</td>
-												</tr> */}
+												</tr>
 												<tr>
 													<td style={{ color: '#0039a6' }}>
 														Color de casco:
@@ -337,7 +351,8 @@ const PesonalSearch = () => {
 														<div>
 															<HelmetSvg
 																fillColor={
-																	userSiscap?.helmet
+																	userSiscap?.helmet ||
+																	'green'
 																}
 															/>
 														</div>
