@@ -4,12 +4,9 @@ import ProtectedRoute from '@src/routes/protectedRoute.jsx';
 import Login from '@src/pages/login';
 import Dashboard from '@src/pages/dashboard';
 import ProfilePage from '@src/pages/profile';
-import PesonalSearchPage from '@src/pages/search/personal/PesonalSearch';
 import GeneralSearchPage from '@src/pages/search/general/GeneralSearch';
-import ProcedureSearchPage from '@src/pages/procedure/search/ProcedureSearch';
-import ProcedureUploadPage from '@src/pages/procedure/upload/ProcedureUpload';
+import PesonalSearchPage from '@src/pages/search/personal/PesonalSearch';
 import PersonalGuestPage from '@src/pages/guest/personal/PersonalGuest.js';
-import ProcedureDetailPage from '@src/pages/procedure/detail/ProcedureDetailPage.js';
 import UserPermissionsPage from '@src/pages/user/permissions/UserPermissions.js';
 
 const router = createBrowserRouter([
@@ -20,10 +17,6 @@ const router = createBrowserRouter([
 	{
 		path: '/login',
 		element: <Login />,
-	},
-	{
-		path: '/guest/personal',
-		element: <PersonalGuestPage />,
 	},
 	{
 		path: '/guest/personal/:userDocument',
@@ -54,27 +47,16 @@ const router = createBrowserRouter([
 				element: <GeneralSearchPage />,
 			},
 			{
-				path: '/search',
-				element: <Navigate to="/procedure/search" replace />,
-			},
-			{
-				path: '/procedure/search',
-				element: <ProcedureSearchPage />,
-			},
-			{
-				path: '/procedure/upload',
-				element: <ProcedureUploadPage />,
-			},
-			{
-				path: '/procedure/:procedureId/detail',
-				element: <ProcedureDetailPage />,
-			},
-			{
 				path: '/user/permissions',
 				element: <UserPermissionsPage />,
 			},
 		],
 	},
 ]);
+
+// DELETE ROUTES
+// path: '/procedure/search',
+// path: '/procedure/upload',
+// path: '/procedure/:procedureId/detail',
 
 export default router;

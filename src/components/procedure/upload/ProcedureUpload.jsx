@@ -12,8 +12,8 @@ const breadcrumbs = [
 	{ value: '/procedure/search', text: 'Procedimientos' },
 ];
 
-const excelTemplateDownloadUrl = `${process.env.REACT_APP_API}/procedure/format/download`;
-const zipTemplateDownloadUrl = `${process.env.REACT_APP_API}/procedure/format/zip/download`;
+const excelTemplateDownloadUrl = `${process.env.REACT_APP_API}/api/v1/procedure/format/download`;
+const zipTemplateDownloadUrl = `${process.env.REACT_APP_API}/api/v1/procedure/format/zip/download`;
 
 const ProcedureUpload = () => {
 	return (

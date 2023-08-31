@@ -1,35 +1,41 @@
-import { Box, Button, Pagination } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
-import { pdfjs, Document, Page } from 'react-pdf';
-import PdfDownloadButton from '@src/components/procedure/elements/PdfDownloadButton.jsx';
+//import { Box, Button, Pagination } from '@mui/material';
+//import { pdfjs, Document, Page } from 'react-pdf';
+//import PdfDownloadButton from '@src/components/procedure/elements/PdfDownloadButton.jsx';
 
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
+//pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
-import 'react-pdf/dist/Page/AnnotationLayer.css';
-import 'react-pdf/dist/Page/TextLayer.css';
+//import 'react-pdf/dist/Page/AnnotationLayer.css';
+//import 'react-pdf/dist/Page/TextLayer.css';
+
+// INFO: install packages
+// "@react-pdf-viewer/core": "^3.12.0",
+// "@react-pdf-viewer/default-layout": "^3.12.0",
+// "pdfjs-dist": "^3.4.120",
+// "react-pdf": "^7.3.3",
 
 const PdfPreview = ({ urlPdf }) => {
-	const [numPages, setNumPages] = useState(0);
-	const [pageNumber, setPageNumber] = useState(1);
-	const [pdfWidth, setPdfWidth] = useState(380);
+	// const [numPages, setNumPages] = useState(0);
+	// const [pageNumber, setPageNumber] = useState(1);
+	// const [pdfWidth, setPdfWidth] = useState(380);
 
-	const warpperRef = useRef(null);
+	 const warpperRef = useRef(null);
 
-	function onDocumentLoadSuccess({ numPages }) {
-		setNumPages(numPages);
-	}
+	// function onDocumentLoadSuccess({ numPages }) {
+	// 	setNumPages(numPages);
+	// }
 
-	const handleChange = (__, value) => {
-		setPageNumber(value);
-	};
+	// const handleChange = (__, value) => {
+	// 	setPageNumber(value);
+	// };
 
-	useEffect(() => {
-		const handleResize = () => {
-			if (warpperRef?.current) setPdfWidth(warpperRef?.current?.offsetWidth);
-		};
-		window.addEventListener('resize', handleResize);
-		handleResize();
-	}, []);
+	// useEffect(() => {
+	// 	const handleResize = () => {
+	// 		if (warpperRef?.current) setPdfWidth(warpperRef?.current?.offsetWidth);
+	// 	};
+	// 	window.addEventListener('resize', handleResize);
+	// 	handleResize();
+	// }, []);
 
 	return (
 		<div
@@ -42,7 +48,7 @@ const PdfPreview = ({ urlPdf }) => {
 				marginBottom: 4,
 			}}
 		>
-			{urlPdf && (
+			{/* {urlPdf && (
 				<div>
 					<Box display={'flex'} justifyContent={'flex-end'} padding={2}>
 						<PdfDownloadButton url={urlPdf} label={'Descargar documento'} />
@@ -59,7 +65,7 @@ const PdfPreview = ({ urlPdf }) => {
 						/>
 					</Box>
 				</div>
-			)}
+			)} */}
 		</div>
 	);
 };
