@@ -112,7 +112,8 @@ const PesonalSearch = () => {
 	const getCourses = async (personas) => {
 		if (Array.isArray(personas) && userDocument) {
 			const found = personas.find(
-				(personal) => personal?.nroDocumento == userDocument
+				(personal) =>
+					(personal?.nroDocumento || '').trim() == (userDocument || '').trim()
 			);
 			if (found) {
 				setValueQr(window.location.href);
