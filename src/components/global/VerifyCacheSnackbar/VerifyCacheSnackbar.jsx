@@ -20,6 +20,7 @@ const VerifyCacheSnackbar = () => {
 
 			await serviceUsers.listUsers({ documento: userDocument });
 			localStorage.setItem('lastUpdate', currentDate);
+			localStorage.setItem('lastUpdateDocument', userDocument);
 		} catch (error) {
 			showValidationErrors(error);
 		} finally {
@@ -30,8 +31,10 @@ const VerifyCacheSnackbar = () => {
 	const verifyLastUpdate = () => {
 		moment.locale('es');
 		const lastUpdate = localStorage.getItem('lastUpdate');
+		const curretDocument = localStorage.getItem('userDocument');
+		const lastUpdateDocumento = localStorage.getItem('lastUpdateDocument');
 
-		if (lastUpdate) {
+		if (lastUpdate && curretDocument == lastUpdateDocumento) {
 			const currentDate = moment().format('YYYY-MM-DD');
 			const lastDate = moment(lastUpdate);
 			const same = lastDate.isSame(currentDate, 'day');
@@ -106,7 +109,7 @@ const VerifyCacheSnackbar = () => {
 				>
 					<div dangerouslySetInnerHTML={{ __html: configSnackbar?.text }} />
 					<Button
-						sx={{ marginX: 1 }}
+						sx={{ marginTop: 1 }}
 						variant="outlined"
 						onClick={getUsers}
 						size="small"
