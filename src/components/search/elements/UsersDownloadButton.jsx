@@ -38,8 +38,9 @@ const UserDownloadButton = () => {
 				startIcon={<DownloadIcon />}
 				onClick={handleButtonClick}
 				size="small"
+				sx={{ textTransform: 'initial' }}
 			>
-				Descargar usuarios
+				Usuarios (xlsx)
 			</LoadingButton>
 		</div>
 	);

@@ -177,6 +177,9 @@ const PesonalSearch = () => {
 			<CustomBreadcrumbs breadcrumbs={breadcrumbs} />
 
 			<Container>
+				<Box display={'flex'} justifyContent={'flex-end'} marginBottom={2}>
+					<UsersDownloadButton />
+				</Box>
 				<Box
 					sx={{
 						minHeight: '100%',
@@ -188,13 +191,6 @@ const PesonalSearch = () => {
 				>
 					{loadingCourse && <LinearProgress />}
 					<Box padding={4}>
-						<Box
-							display={'flex'}
-							justifyContent={'flex-end'}
-							marginBottom={2}
-						>
-							<UsersDownloadButton />
-						</Box>
 						<Typography
 							sx={{
 								textAlign: 'center',
@@ -366,9 +362,15 @@ const PesonalSearch = () => {
 												justifyContent={'flex-end'}
 											>
 												<UpdateUserDialog
-													helmetcolor={userSiscap?.helmet}
+													helmetcolor={
+														userSiscap?.helmet || 'green'
+													}
 													user={userSiscap}
 													getCourses={getCourses}
+													userDocument={
+														userSiscap?.nroDocumento ||
+														selectedUser?.document
+													}
 												/>
 											</Box>
 										)}

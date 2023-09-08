@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
@@ -20,10 +20,11 @@ const helmetList = [
 	{ key: 'green', colorName: 'Verde', colorPrimary: '', colorSecondary: '' },
 ];
 
-const UpdateUserDialog = ({ helmetcolor, user, getCourses }) => {
+const UpdateUserDialog = ({ helmetcolor, user, getCourses, userDocument }) => {
 	const [open, setOpen] = useState(false);
 	const [helmet, setHelmet] = useState(helmetcolor || '');
 	const [isLoading, setIsLoading] = useState(false);
+	const [helmets, setHelmets] = useState(helmetList);
 
 	const handleClickOpen = () => {
 		setOpen(true);
@@ -41,7 +42,7 @@ const UpdateUserDialog = ({ helmetcolor, user, getCourses }) => {
 	const sendForm = async () => {
 		const data = {
 			helmet: helmet,
-			document: user?.nroDocumento,
+			document: userDocument,
 		};
 		try {
 			setIsLoading(true);
@@ -54,6 +55,12 @@ const UpdateUserDialog = ({ helmetcolor, user, getCourses }) => {
 			setIsLoading(false);
 		}
 	};
+
+	useEffect(() => {
+		console.log('helmetcolor', helmetcolor);
+		const HelmetFiltered = helmetList.filter((item) => item?.key != helmetcolor);
+		setHelmets(HelmetFiltered);
+	}, [helmetcolor]);
 
 	return (
 		<div>
@@ -76,12 +83,9 @@ const UpdateUserDialog = ({ helmetcolor, user, getCourses }) => {
 							label="Color de casco"
 							onChange={handleChange}
 						>
-							{helmetList.map((item, index) => {
+							{helmets.map((item, index) => {
 								return (
-									<MenuItem
-										value={item?.key}
-										key={item?.key + '-helmet'}
-									>
+									<MenuItem value={item?.key} key={index + '-helmet'}>
 										{item?.colorName}
 									</MenuItem>
 								);
