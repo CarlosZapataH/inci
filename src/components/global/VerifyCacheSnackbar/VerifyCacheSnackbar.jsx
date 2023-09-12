@@ -17,15 +17,32 @@ const VerifyCacheSnackbar = () => {
 			setLoading(true);
 			const userDocument = localStorage.getItem('userDocument');
 			const currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
-
-			await serviceUsers.listUsers({ documento: userDocument });
-			localStorage.setItem('lastUpdate', currentDate);
-			localStorage.setItem('lastUpdateDocument', userDocument);
+			const { personas } = await serviceUsers.listUsers();
+			const persons = Array.isArray(personas) ? personas : [];
+			if (persons.length > 0) {
+				showSnackbar(
+					`Hemos guardado exitosamente ${persons.length} trabajadores.`,
+					'success'
+				);
+				localStorage.setItem('lastUpdate', currentDate);
+				localStorage.setItem('lastUpdateDocument', userDocument);
+			} else {
+				showSnackbar(
+					'¡Ups! No se pudo guardar la información de los trabajadores. <br> Por favor, inténtalo de nuevo más tarde.',
+					'warning'
+				);
+			}
 		} catch (error) {
 			showValidationErrors(error);
 		} finally {
 			setLoading(false);
 		}
+	};
+
+	const showSnackbar = (text = '', severity = 'info') => {
+		setOpen(false);
+		setConfigSnackbar({ text, severity });
+		setOpen(true);
 	};
 
 	const verifyLastUpdate = () => {
@@ -53,31 +70,20 @@ const VerifyCacheSnackbar = () => {
 	};
 
 	const verifycache = () => {
-		caches
-			.match('https://hombrenuevo-api.smartrix.pe/api/v1/siscap/users')
-			.then((response) => {
-				if (response) {
-					setConfigSnackbar({
-						text: 'La función offline está disponible.',
-						severity: 'success',
-					});
+		const cacheName = 'siscap-users-cache';
+		try {
+			caches.keys().then((cacheNames) => {
+				if ([...cacheNames].includes(cacheName)) {
+					console.log('SISCAP	está en caché');
 				} else {
-					// 'Función offline no disponible. Por favor, actualiza la página.'
-					setConfigSnackbar({
-						text: 'Proceso de carga completado.',
-						severity: 'info',
-					});
+					localStorage.removeItem('lastUpdate');
+					localStorage.removeItem('lastUpdateDocument');
+					console.log('La respuesta de la API no está en caché');
 				}
-			})
-			.catch((error) => {
-				setConfigSnackbar({
-					text: 'Lamentamos informarte que la función offline aún no está disponible',
-					severity: 'error',
-				});
-			})
-			.finally(() => {
-				setOpen(true);
 			});
+		} catch (error) {
+			console.error(error);
+		}
 	};
 
 	const handleClose = (event, reason) => {
@@ -88,6 +94,7 @@ const VerifyCacheSnackbar = () => {
 	};
 
 	useEffect(() => {
+		verifycache();
 		verifyLastUpdate();
 	}, []);
 
@@ -108,14 +115,16 @@ const VerifyCacheSnackbar = () => {
 					sx={{ width: '100%' }}
 				>
 					<div dangerouslySetInnerHTML={{ __html: configSnackbar?.text }} />
-					<Button
-						sx={{ marginTop: 1 }}
-						variant="outlined"
-						onClick={getUsers}
-						size="small"
-					>
-						Actualizar
-					</Button>
+					{configSnackbar?.severity === 'info' && (
+						<Button
+							sx={{ marginTop: 1 }}
+							variant="outlined"
+							onClick={getUsers}
+							size="small"
+						>
+							Actualizar
+						</Button>
+					)}
 				</Alert>
 			</Snackbar>
 		</div>

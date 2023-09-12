@@ -41,7 +41,7 @@ const validateFileSize = ({ file = null, maxSizeMb = 0 }) => {
 
 const showValidationErrors = (error) => {
 	const { message } = error?.response?.data || {};
-	let errorTitle = 'Validación fallida';
+	let errorTitle = 'Error en la solicitud';
 	let errorMessage = '';
 
 	if (Array.isArray(message)) {

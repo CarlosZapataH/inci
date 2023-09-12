@@ -57,7 +57,6 @@ const UpdateUserDialog = ({ helmetcolor, user, getCourses, userDocument }) => {
 	};
 
 	useEffect(() => {
-		console.log('helmetcolor', helmetcolor);
 		const HelmetFiltered = helmetList.filter((item) => item?.key != helmetcolor);
 		setHelmets(HelmetFiltered);
 	}, [helmetcolor]);
