@@ -19,13 +19,15 @@ const VerifyCacheSnackbar = () => {
 			const currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
 			const { personas } = await serviceUsers.listUsers();
 			const persons = Array.isArray(personas) ? personas : [];
-			if (persons.length > 0) {
-				showSnackbar(
-					`Hemos guardado exitosamente ${persons.length} trabajadores.`,
-					'success'
-				);
+			if (persons.length > 0 && (await verifycache())) {
 				localStorage.setItem('lastUpdate', currentDate);
 				localStorage.setItem('lastUpdateDocument', userDocument);
+				showSnackbar(
+					`Hemos guardado exitosamente ${persons.length} ${
+						persons.length === 1 ? 'registro' : 'registros'
+					}.`,
+					'success'
+				);
 			} else {
 				showSnackbar(
 					'¡Ups! No se pudo guardar la información de los trabajadores. <br> Por favor, inténtalo de nuevo más tarde.',
@@ -45,13 +47,17 @@ const VerifyCacheSnackbar = () => {
 		setOpen(true);
 	};
 
-	const verifyLastUpdate = () => {
+	const verifyLastUpdate = async () => {
 		moment.locale('es');
 		const lastUpdate = localStorage.getItem('lastUpdate');
 		const curretDocument = localStorage.getItem('userDocument');
 		const lastUpdateDocumento = localStorage.getItem('lastUpdateDocument');
 
-		if (lastUpdate && curretDocument == lastUpdateDocumento) {
+		if (
+			lastUpdate &&
+			curretDocument == lastUpdateDocumento &&
+			(await verifycache())
+		) {
 			const currentDate = moment().format('YYYY-MM-DD');
 			const lastDate = moment(lastUpdate);
 			const same = lastDate.isSame(currentDate, 'day');
@@ -69,20 +75,20 @@ const VerifyCacheSnackbar = () => {
 		}
 	};
 
-	const verifycache = () => {
-		const cacheName = 'siscap-users-cache';
+	const verifycache = async () => {
 		try {
-			caches.keys().then((cacheNames) => {
-				if ([...cacheNames].includes(cacheName)) {
-					console.log('SISCAP	está en caché');
-				} else {
-					localStorage.removeItem('lastUpdate');
-					localStorage.removeItem('lastUpdateDocument');
-					console.log('La respuesta de la API no está en caché');
-				}
-			});
+			const cacheName = 'siscap-users-cache';
+			const cacheNames = await caches.keys();
+			const isRegistered = [...cacheNames].includes(cacheName);
+			if (isRegistered) {
+				return true;
+			} else {
+				localStorage.removeItem('lastUpdate');
+				localStorage.removeItem('lastUpdateDocument');
+				return false;
+			}
 		} catch (error) {
-			console.error(error);
+			return false;
 		}
 	};
 
@@ -94,7 +100,6 @@ const VerifyCacheSnackbar = () => {
 	};
 
 	useEffect(() => {
-		verifycache();
 		verifyLastUpdate();
 	}, []);
 
