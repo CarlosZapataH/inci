@@ -67,7 +67,10 @@ const HelmetTable = ({ helmets }) => {
 					},
 				}}
 				pageSizeOptions={[5, 10, 20]}
-				getRowHeight={() => 60}
+				getRowHeight={() => 60}				
+				localeText={{
+					noRowsLabel: 'No hay filas disponibles',
+				}}
 				autoHeight
 			/>
 		</div>

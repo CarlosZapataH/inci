@@ -1,7 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
+import { Box, Card, Pagination, Stack, useMediaQuery, useTheme } from '@mui/material';
+import VerticalTable from '@src/components/search/elements/VerticalTable.jsx';
 
 const TrainingTable = ({ trainings }) => {
+	const theme = useTheme();
+	const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
 	const columns = [
 		{
 			field: 'nombreCurso',
@@ -27,21 +32,28 @@ const TrainingTable = ({ trainings }) => {
 
 	return (
 		<div id="TrainingTable" style={{ maxWidth: '100%', overflow: 'auto' }}>
-			<DataGrid
-				rows={trainings}
-				columns={columns.map((col) => ({
-					...col,
-					cellClassName: 'long-text-cell',
-				}))}
-				initialState={{
-					pagination: {
-						paginationModel: { page: 0, pageSize: 5 },
-					},
-				}}
-				pageSizeOptions={[5, 10, 20]}
-				getRowHeight={() => 60}
-				autoHeight
-			/>
+			{isMobile ? (
+				<VerticalTable items={trainings} headers={columns} />
+			) : (
+				<DataGrid
+					rows={trainings}
+					columns={columns.map((col) => ({
+						...col,
+						cellClassName: 'long-text-cell',
+					}))}
+					initialState={{
+						pagination: {
+							paginationModel: { page: 0, pageSize: 5 },
+						},
+					}}
+					pageSizeOptions={[5, 10, 20]}
+					getRowHeight={() => 60}
+					localeText={{
+						noRowsLabel: 'No hay filas disponibles',
+					}}
+					autoHeight
+				/>
+			)}			
 		</div>
 	);
 };

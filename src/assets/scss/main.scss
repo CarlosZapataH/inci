@@ -64,3 +64,24 @@ table {
 		overflow: auto;
 	}
 }
+
+table.custom-vertical-table {
+	width: 100%;
+	tr {
+		border-bottom: 1px solid lightgray;
+		&:last-child {
+			border: none;
+		}
+		td {
+			width: 50%;
+			font-size: 0.875rem;
+			vertical-align: initial;
+			&:first-of-type {
+				color: #0039a6;
+			}
+			&:last-of-type {
+				color: grey;
+			}
+		}
+	}
+}

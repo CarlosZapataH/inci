@@ -1,5 +1,7 @@
 import React from 'react';
 import { DataGrid } from '@mui/x-data-grid';
+import { useMediaQuery, useTheme } from '@mui/material';
+import VerticalTable from '@src/components/search/elements/VerticalTable.jsx';
 
 const customCellClassName = (params) => {
 	if (params.value && params.value.length > 20) {
@@ -16,6 +18,9 @@ const getRowHeight = (params) => {
 };
 
 const ProceduresTable = ({ procedures }) => {
+	const theme = useTheme();
+	const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
 	const columns = [
 		{
 			field: 'nombreCurso',
@@ -41,21 +46,28 @@ const ProceduresTable = ({ procedures }) => {
 
 	return (
 		<div id="ProceduresTable" style={{ maxWidth: '100%', overflow: 'auto' }}>
-			<DataGrid
-				autoHeight
-				rows={procedures}
-				columns={columns.map((col) => ({
-					...col,
-					cellClassName: customCellClassName,
-				}))}
-				initialState={{
-					pagination: {
-						paginationModel: { page: 0, pageSize: 5 },
-					},
-				}}
-				pageSizeOptions={[5, 10, 20]}
-				getRowHeight={getRowHeight}
-			/>
+			{isMobile ? (
+				<VerticalTable items={procedures} headers={columns} />
+			) : (
+				<DataGrid
+					autoHeight
+					rows={procedures}
+					columns={columns.map((col) => ({
+						...col,
+						cellClassName: customCellClassName,
+					}))}
+					initialState={{
+						pagination: {
+							paginationModel: { page: 0, pageSize: 5 },
+						},
+					}}
+					pageSizeOptions={[5, 10, 20]}
+					getRowHeight={getRowHeight}
+					localeText={{
+						noRowsLabel: 'No hay filas disponibles',
+					}}
+				/>
+			)}
 		</div>
 	);
 };
