@@ -16,24 +16,51 @@ const VerticalTable = ({ items, headers }) => {
 
 	return (
 		<Box>
-			{currentData.map((item, index) => (
-				<Card
-					sx={{ my: 1, marginBottom: 2, marginTop: 2, p: 2 }}
-					variant="outlined"
-					key={index}
-				>
-					<table className="custom-vertical-table">
-						<tbody>
-							{headers.map((header, headerInd) => (
-								<tr key={headerInd + '-tr'}>
-									<td>{header?.headerName}</td>
-									<td>{item[header?.field]}</td>
-								</tr>
-							))}
-						</tbody>
-					</table>
-				</Card>
-			))}
+			{Array.isArray(items) && items?.length > 0 ? (
+				<div>
+					{currentData.map((item, index) => (
+						<Card
+							sx={{ my: 1, marginBottom: 2, marginTop: 2, p: 2 }}
+							variant="outlined"
+							key={index}
+						>
+							<table className="custom-vertical-table">
+								<tbody>
+									{headers.map((header, headerInd) => (
+										<tr key={headerInd + '-tr'}>
+											<td>{header?.headerName}</td>
+											<td>
+												{header?.renderCell ? (
+													<div>
+														<header.renderCell
+															value={
+																Array.isArray(item)
+																	? item[0]?.[
+																			header?.field
+																	  ]
+																	: item?.[
+																			header?.field
+																	  ] || null
+															}
+														/>
+													</div>
+												) : (
+													<div>{item[header?.field]}</div>
+												)}
+											</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</Card>
+					))}
+				</div>
+			) : (
+				<Box textAlign={'center'}>
+					<p>No hay registros disponibles.</p>
+				</Box>
+			)}
+
 			<Box display={'flex'} justifyContent={'center'}>
 				<Pagination
 					count={totalPages}

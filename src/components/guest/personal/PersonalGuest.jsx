@@ -16,11 +16,17 @@ import {
 	Grid,
 	Hidden,
 	LinearProgress,
+	Tab,
+	Tabs,
 	Typography,
+	useMediaQuery,
+	useTheme,
 } from '@mui/material';
 import HelmetTable from '@src/components/search/elements/HelmetTable';
 import { getCourseSiscapByUser } from '@src/features/course/service/course';
 import moment from 'moment';
+import TabPanel from '@src/components/global/TabPanel/TabPanel';
+import MentorTable from '@src/components/search/elements/MentorTable';
 
 const breadcrumbs = [
 	{ value: '/login', text: 'Inicio' },
@@ -28,6 +34,8 @@ const breadcrumbs = [
 ];
 
 const PesonalSearch = () => {
+	const theme = useTheme();
+	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 	const { userDocument } = useParams();
 	const [valueQr, setValueQr] = useState(null);
 	const [loadingCourse, setLoadingCourse] = useState(false);
@@ -36,6 +44,8 @@ const PesonalSearch = () => {
 	const [qualifications, setQualifications] = useState([]);
 	const [procedures, setProcedures] = useState([]);
 	const [helmetHistory, setHelmetHistory] = useState([]);
+	const [mentors, setMentors] = useState([]);
+	const [currentTab, setCurrentTab] = useState(0);
 
 	const [online, setOnline] = useState(navigator ? navigator.onLine : true);
 
@@ -67,6 +77,10 @@ const PesonalSearch = () => {
 		} else {
 			getUsers();
 		}
+	};
+
+	const handleChangeTab = (event, newValue) => {
+		setCurrentTab(newValue);
 	};
 
 	const addId = (arr) => {
@@ -122,6 +136,7 @@ const PesonalSearch = () => {
 					habilitaciones,
 					procedimientos,
 					helmet_history,
+					coach_history,
 					...currentUser
 				} = found;
 				if (Array.isArray(capacitaciones))
@@ -132,6 +147,7 @@ const PesonalSearch = () => {
 					setProcedures(addId(procedimientos || []));
 				if (Array.isArray(helmet_history))
 					setHelmetHistory(addId(helmet_history || []));
+				if (Array.isArray(coach_history)) setMentors(addId(coach_history || []));
 				setUserSiscap(currentUser);
 			}
 		}
@@ -250,7 +266,7 @@ const PesonalSearch = () => {
 												{userSiscap?.fechaInicio && (
 													<tr>
 														<td style={{ color: '#0039a6' }}>
-															Fecha de inicio:
+															Fecha de ingreso:
 														</td>
 														<td>{userSiscap?.fechaInicio}</td>
 													</tr>
@@ -293,18 +309,57 @@ const PesonalSearch = () => {
 									<HelmetTable helmets={helmetHistory} />
 								</Grid>
 								<Grid xs={12} item>
-									<Typography gutterBottom>Capacitaciones</Typography>
-									<TrainingTable trainings={trainings} />
+									<Typography>Asignaciones de mentores</Typography>
+									<MentorTable mentors={mentors} />
 								</Grid>
 								<Grid xs={12} item>
-									<Typography gutterBottom>Habilitaciones</Typography>
-									<QualificationsTable
-										qualifications={qualifications}
-									/>
-								</Grid>
-								<Grid xs={12} item>
-									<Typography gutterBottom>Procedimientos</Typography>
-									<ProceduresTable procedures={procedures} />
+									{userSiscap && userSiscap?.nroDocumento && (
+										<Box
+											sx={{
+												backgroundColor: 'white.main',
+												borderRadius: '10px',
+												mb: 2,
+											}}
+										>
+											<Tabs
+												value={currentTab}
+												onChange={handleChangeTab}
+												orientation={
+													isMobile ? 'vertical' : 'horizontal'
+												}
+											>
+												<Tab
+													label="Capacitaciones"
+													sx={{
+														borderBottom: isMobile ? 1 : 0,
+														borderColor: 'divider',
+													}}
+												/>
+												<Tab
+													label="Habilitaciones"
+													sx={{
+														borderBottom: isMobile ? 1 : 0,
+														borderColor: 'divider',
+													}}
+												/>
+												<Tab label="Procedimientos" />
+											</Tabs>
+
+											<TabPanel value={currentTab} index={0}>
+												<TrainingTable trainings={trainings} />
+											</TabPanel>
+											<TabPanel value={currentTab} index={1}>
+												<QualificationsTable
+													qualifications={qualifications}
+												/>
+											</TabPanel>
+											<TabPanel value={currentTab} index={2}>
+												<ProceduresTable
+													procedures={procedures}
+												/>
+											</TabPanel>
+										</Box>
+									)}
 								</Grid>
 							</Grid>
 						</div>

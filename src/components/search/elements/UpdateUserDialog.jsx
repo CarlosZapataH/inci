@@ -46,7 +46,7 @@ const UpdateUserDialog = ({ helmetcolor, user, getCourses, userDocument }) => {
 		};
 		try {
 			setIsLoading(true);
-			await staffService.updateStaff(data);
+			await staffService.updateHelmet(data);
 			getCourses(userDocument);			
 		} catch (error) {
 			showValidationErrors(error);

@@ -14,6 +14,7 @@ import UpdateUserDialog from '@src/components/search/elements/UpdateUserDialog.j
 import DownloadIcon from '@mui/icons-material/Download';
 import HelmetTable from '@src/components/search/elements/HelmetTable.jsx';
 import UsersDownloadButton from '@src/components/search/elements/UsersDownloadButton.jsx';
+import AssignMentorDialog from '@src/components/search/elements/AssignMentorDialog.jsx';
 
 import {
 	Autocomplete,
@@ -35,6 +36,7 @@ import { showValidationErrors } from '@src/helpers/listValidation';
 import { checkPermissions } from '@src/features/auth/authSelector';
 import moment from 'moment';
 import TabPanel from '@src/components/global/TabPanel/TabPanel.jsx';
+import MentorTable from '../elements/MentorTable';
 //import { TabContext, TabList, TabPanel } from '@mui/lab';
 
 const breadcrumbs = [
@@ -68,6 +70,7 @@ const PesonalSearch = () => {
 	const [procedures, setProcedures] = useState([]);
 	const [helmetHistory, setHelmetHistory] = useState([]);
 	const [currentTab, setCurrentTab] = useState(0);
+	const [mentors, setMentors] = useState([]);
 
 	const [filters, setFilters] = useState({
 		page: 1,
@@ -136,21 +139,25 @@ const PesonalSearch = () => {
 					habilitaciones,
 					procedimientos,
 					helmet_history,
+					coach_history,
 					...currentUser
 				} = response?.personas[0];
 				setUserSiscap(currentUser);
 				if (Array.isArray(capacitaciones)) setTrainings(addId(capacitaciones));
 				if (Array.isArray(habilitaciones))
 					setQualifications(addId(habilitaciones));
-				if (Array.isArray(procedimientos)) setProcedures(addId(procedimientos));
-				if (Array.isArray(helmet_history))
+				if (Array.isArray(procedimientos))
+					setProcedures(addId(procedimientos || []));
+				if (Array.isArray(helmet_history || []))
 					setHelmetHistory(addId(helmet_history));
+				if (Array.isArray(coach_history)) setMentors(addId(coach_history || []));
 			} else {
 				setUserSiscap(null);
 				setTrainings([]);
 				setQualifications([]);
 				setProcedures([]);
 				setHelmetHistory([]);
+				setMentors([]);
 			}
 		} catch (error) {
 			showValidationErrors(error);
@@ -335,10 +342,18 @@ const PesonalSearch = () => {
 												</td>
 												<td>{selectedUser?.email}</td>
 											</tr>
+											{userSiscap?.servicio && (
+												<tr>
+													<td style={{ color: '#0039a6' }}>
+														Servicio:
+													</td>
+													<td>{userSiscap?.servicio}</td>
+												</tr>
+											)}
 											{userSiscap?.fechaInicio && (
 												<tr>
 													<td style={{ color: '#0039a6' }}>
-														Fecha de inicio:
+														Fecha de ingreso:
 													</td>
 													<td>{userSiscap?.fechaInicio}</td>
 												</tr>
@@ -371,12 +386,32 @@ const PesonalSearch = () => {
 										</tbody>
 									</table>
 									{!!hasPermission && (
-										<Box display={'flex'} justifyContent={'flex-end'}>
+										<Box
+											height="initial"
+											minHeight="initial"
+											display={'flex'}
+											justifyContent={'flex-end'}
+										>
 											<UpdateUserDialog
 												helmetcolor={
 													userSiscap?.helmet || 'green'
 												}
 												user={userSiscap}
+												getCourses={getCourses}
+												userDocument={
+													userSiscap?.nroDocumento ||
+													selectedUser?.document
+												}
+											/>
+										</Box>
+									)}
+									{!!hasPermission && (
+										<Box
+											height="initial"
+											display={'flex'}
+											justifyContent={'flex-end'}
+										>
+											<AssignMentorDialog
 												getCourses={getCourses}
 												userDocument={
 													userSiscap?.nroDocumento ||
@@ -405,6 +440,21 @@ const PesonalSearch = () => {
 						<HelmetTable helmets={helmetHistory} />
 					</Box>
 				)}
+
+				{selectedUser && selectedUser?.id && (
+					<Box
+						sx={{
+							backgroundColor: 'white.main',
+							borderRadius: '10px',
+							mb: 2,
+							p: { xs: 2, sm: 2, md: 4 },
+						}}
+					>
+						<Typography marginBottom={2}>Asignaciones de mentor</Typography>
+						<MentorTable mentors={mentors} />
+					</Box>
+				)}
+
 				{selectedUser && selectedUser?.id && (
 					<Box
 						sx={{

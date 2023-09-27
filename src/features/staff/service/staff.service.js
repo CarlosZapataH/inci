@@ -1,8 +1,17 @@
 import { http } from '@src/features/api/api.js';
 
-const updateStaff = async (payload) => {
+const updateHelmet = async (payload) => {
 	try {
-		const { data } = await http.post('siscap/users/information', payload);
+		const { data } = await http.post('/siscap/users/helmet', payload);
+		return data || null;
+	} catch (error) {
+		return Promise.reject(error);
+	}
+};
+
+const assignMentor = async (payload) => {
+	try {
+		const { data } = await http.post('siscap/users/coach', payload);
 		return data || null;
 	} catch (error) {
 		return Promise.reject(error);
@@ -31,4 +40,4 @@ const getUsersFile = async (payload) => {
 	}
 };
 
-export { updateStaff, listUsers, getUsersFile };
+export { updateHelmet, listUsers, getUsersFile, assignMentor };

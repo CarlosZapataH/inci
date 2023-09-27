@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import * as securityService from '@src/features/security/service/security.js';
+import * as securityService from '@src/features/security/service/security.service.js';
 
 export const listCharges = createAsyncThunk('security/listCharges', async () => {
 	const response = await securityService.getCharges();
@@ -14,7 +14,13 @@ export const listCostCenter = createAsyncThunk(
 	}
 );
 
+export const searchUsers = createAsyncThunk('security/searchUsers', async (params) => {
+	const response = await securityService.searchUsers(params);
+	return response;
+});
+
 const initialState = {
+	users: [],
 	costCenter: [],
 	charges: [],
 };
@@ -33,6 +39,9 @@ const courseSlice = createSlice({
 		});
 		builder.addCase(listCostCenter.fulfilled, (state, action) => {
 			state.costCenter = action?.payload?.data;
+		});
+		builder.addCase(searchUsers.fulfilled, (state, action) => {
+			state.users = action?.payload?.data;
 		});
 	},
 });

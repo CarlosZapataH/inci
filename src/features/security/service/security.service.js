@@ -38,4 +38,13 @@ const getCharges = async (params) => {
 	}
 };
 
-export { usersActive, getManagements, getCostCenter, getCharges };
+const searchUsers = async (params) => {
+	try {
+		const { data } = await http.get('user/search', { params });
+		return data || null;
+	} catch (error) {
+		return Promise.reject(error);
+	}
+};
+
+export { usersActive, getManagements, getCostCenter, getCharges, searchUsers };

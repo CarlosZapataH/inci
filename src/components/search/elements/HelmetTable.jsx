@@ -2,6 +2,8 @@ import React from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import moment from 'moment';
 import HelmetSvg from '@src/components/search/elements/HelmetSvg.jsx';
+import VerticalTable from './VerticalTable';
+import { useMediaQuery, useTheme } from '@mui/material';
 
 const CustomCellRendererColor = ({ value }) => {
 	return (
@@ -22,6 +24,9 @@ const CustomCellRendererUser = ({ value }) => {
 };
 
 const HelmetTable = ({ helmets }) => {
+	const theme = useTheme();
+	const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
 	const columns = [
 		{
 			field: 'created_at',
@@ -55,24 +60,28 @@ const HelmetTable = ({ helmets }) => {
 
 	return (
 		<div id="QualificationsTable" style={{ maxWidth: '100%', overflow: 'auto' }}>
-			<DataGrid
-				rows={helmets}
-				columns={columns.map((col) => ({
-					...col,
-					cellClassName: 'long-text-cell',
-				}))}
-				initialState={{
-					pagination: {
-						paginationModel: { page: 0, pageSize: 5 },
-					},
-				}}
-				pageSizeOptions={[5, 10, 20]}
-				getRowHeight={() => 60}				
-				localeText={{
-					noRowsLabel: 'No hay filas disponibles',
-				}}
-				autoHeight
-			/>
+			{isMobile ? (
+				<VerticalTable items={helmets || []} headers={columns} />
+			) : (
+				<DataGrid
+					rows={helmets}
+					columns={columns.map((col) => ({
+						...col,
+						cellClassName: 'long-text-cell',
+					}))}
+					initialState={{
+						pagination: {
+							paginationModel: { page: 0, pageSize: 5 },
+						},
+					}}
+					pageSizeOptions={[5, 10, 20]}
+					getRowHeight={() => 60}
+					localeText={{
+						noRowsLabel: 'No hay filas disponibles',
+					}}
+					autoHeight
+				/>
+			)}
 		</div>
 	);
 };
