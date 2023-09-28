@@ -18,6 +18,7 @@ import {
 import * as staffService from '@src/features/staff/service/staff.service.js';
 import { showValidationErrors } from '@src/helpers/listValidation';
 import * as securityService from '@src/features/security/service/security.service.js';
+import Swal from 'sweetalert2';
 
 const assignMentorDialog = ({ helmetcolor, user, getCourses, userDocument }) => {
 	const [open, setOpen] = useState(false);
@@ -31,8 +32,10 @@ const assignMentorDialog = ({ helmetcolor, user, getCourses, userDocument }) => 
 		setOpen(true);
 	};
 
-	const handleClose = () => {
-		setOpen(false);
+	const handleClose = (__, reason) => {
+		if (reason != 'backdropClick') {
+			setOpen(false);
+		}
 	};
 
 	const handleChange = (__, newValue) => {
@@ -48,6 +51,12 @@ const assignMentorDialog = ({ helmetcolor, user, getCourses, userDocument }) => 
 			setIsLoading(true);
 			await staffService.assignMentor(data);
 			getCourses(userDocument);
+			Swal.fire({
+				icon: 'success',
+				confirmButtonColor: '#0039a6',
+				title: 'Asignación de Mentor Exitosa',
+				text: 'La asignación de mentor se ha realizado con éxito.',
+			});
 		} catch (error) {
 			showValidationErrors(error);
 		} finally {
@@ -96,8 +105,12 @@ const assignMentorDialog = ({ helmetcolor, user, getCourses, userDocument }) => 
 					/>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={handleClose}>Cancelar</Button>
-					<Button onClick={sendForm}>Guardar</Button>
+					<Button onClick={handleClose} disabled={isLoading}>
+						Cancelar
+					</Button>
+					<Button onClick={sendForm} disabled={isLoading}>
+						Guardar
+					</Button>
 				</DialogActions>
 			</Dialog>
 		</div>

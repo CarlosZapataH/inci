@@ -10,6 +10,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { FormControl, InputLabel, LinearProgress, MenuItem, Select } from '@mui/material';
 import * as staffService from '@src/features/staff/service/staff.service.js';
 import { showValidationErrors } from '@src/helpers/listValidation';
+import Swal from 'sweetalert2';
 
 const helmetList = [
 	{ key: 'blue', colorName: 'Azul', colorPrimary: '', colorSecondary: '' },
@@ -22,7 +23,7 @@ const helmetList = [
 
 const UpdateUserDialog = ({ helmetcolor, user, getCourses, userDocument }) => {
 	const [open, setOpen] = useState(false);
-	const [helmet, setHelmet] = useState(helmetcolor || '');
+	const [helmet, setHelmet] = useState('');
 	const [isLoading, setIsLoading] = useState(false);
 	const [helmets, setHelmets] = useState(helmetList);
 
@@ -30,8 +31,10 @@ const UpdateUserDialog = ({ helmetcolor, user, getCourses, userDocument }) => {
 		setOpen(true);
 	};
 
-	const handleClose = () => {
-		setOpen(false);
+	const handleClose = (_, reason) => {
+		if (reason != 'backdropClick') {
+			setOpen(false);
+		}
 	};
 
 	const handleChange = (event) => {
@@ -47,13 +50,24 @@ const UpdateUserDialog = ({ helmetcolor, user, getCourses, userDocument }) => {
 		try {
 			setIsLoading(true);
 			await staffService.updateHelmet(data);
-			getCourses(userDocument);			
+			getCourses(userDocument);
+			Swal.fire({
+				icon: 'success',
+				confirmButtonColor: '#0039a6',
+				title: '¡Cambio de Color de Casco Exitoso!',
+				text: 'El casco ha sido actualizado con el nuevo color seleccionado.',
+			});
 		} catch (error) {
 			showValidationErrors(error);
 		} finally {
 			handleClose();
 			setIsLoading(false);
 		}
+	};
+
+	const handleBackdropClick = (event) => {
+		// Evitar que el diálogo se cierre al hacer clic en el fondo (backdrop).
+		event.stopPropagation();
 	};
 
 	useEffect(() => {
@@ -71,7 +85,7 @@ const UpdateUserDialog = ({ helmetcolor, user, getCourses, userDocument }) => {
 				<DialogTitle>Editar Usuario</DialogTitle>
 				<DialogContent>
 					<DialogContentText sx={{ marginBottom: 2 }}>
-						Elige el color de tu casco
+						Elige el color de casco
 					</DialogContentText>
 					<FormControl fullWidth size="small">
 						<InputLabel id="HelmetSelectLabel">Color de casco</InputLabel>
@@ -93,8 +107,12 @@ const UpdateUserDialog = ({ helmetcolor, user, getCourses, userDocument }) => {
 					</FormControl>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={handleClose}>Cancelar</Button>
-					<Button onClick={sendForm}>Guardar</Button>
+					<Button onClick={handleClose} disabled={isLoading}>
+						Cancelar
+					</Button>
+					<Button onClick={sendForm} disabled={isLoading}>
+						Guardar
+					</Button>
 				</DialogActions>
 			</Dialog>
 		</div>

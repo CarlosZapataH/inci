@@ -36,6 +36,12 @@ const MentorTable = ({ mentors }) => {
 			sortable: false,
 		},
 		{
+			field: 'user_coach_new_charge',
+			headerName: 'Cargo del mentor',
+			width: 300,
+			sortable: false,
+		},
+		{
 			field: 'user_create',
 			headerName: 'Registrado por',
 			width: 300,
@@ -49,10 +55,17 @@ const MentorTable = ({ mentors }) => {
 		},
 	];
 
+	const joinCharge = (coach) => {
+		const charges = Array.isArray(coach.charges) ? coach.charges : [];
+		const result = charges.map((charge) => charge.name);
+		return Array.isArray(result) ? result.join(', ') || '-' : '-';
+	};
+
 	const customMentor = mentors.map((e) => {
 		return {
 			...e,
 			user_coach_new: e?.user_coach_new?.fullName,
+			user_coach_new_charge: joinCharge(e?.user_coach_new),
 			user_create: e?.user_create?.fullName,
 		};
 	});

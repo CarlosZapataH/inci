@@ -52,7 +52,9 @@ const showValidationErrors = (error) => {
 		errorMessage = message;
 	} else if (error?.message) {
 		errorTitle = 'Error en la solicitud';
-		errorMessage = error?.message;
+		errorMessage =
+			'Hubo un problema con la solicitud que enviaste. Por favor, verifica los datos e intenta nuevamente.' ||
+			error?.message;
 	} else {
 		errorTitle = 'Error en la solicitud';
 		errorMessage =
