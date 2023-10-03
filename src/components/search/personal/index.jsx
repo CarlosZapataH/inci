@@ -37,6 +37,7 @@ import { checkPermissions } from '@src/features/auth/authSelector';
 import moment from 'moment';
 import TabPanel from '@src/components/global/TabPanel/TabPanel.jsx';
 import MentorTable from '../elements/MentorTable';
+import { useNavigate } from 'react-router-dom';
 //import { TabContext, TabList, TabPanel } from '@mui/lab';
 
 const breadcrumbs = [
@@ -56,9 +57,11 @@ const PesonalSearch = () => {
 	);
 
 	const theme = useTheme();
+	const navigate = useNavigate();
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 	const users = useSelector((state) => state.course.users);
 	const courses = useSelector((state) => state.course.coursesByUser);
+	const userSession = useSelector((state) => state.auth.user);
 	const [selectedUser, setSelectedUser] = useState(null);
 	const [valueQr, setValueQr] = useState(null);
 	const [loadingUser, setLoadingUser] = useState(false);
@@ -103,8 +106,23 @@ const PesonalSearch = () => {
 		return filteredOptions;
 	};
 
+	const checkConnection = () => {
+		if (!window.navigator.onLine) {
+			navigate('/guest/personal/' + (userSession?.document || '0'));
+		}
+	};
+
+	const handleOnlineStatusChange = () => {
+		navigate('/guest/personal/' + (userSession?.document || '0'));
+	};
+
 	useEffect(() => {
+		checkConnection();
 		getUsers();
+		window.addEventListener('offline', handleOnlineStatusChange);
+		return () => {
+			window.removeEventListener('offline', handleOnlineStatusChange);
+		};
 	}, []);
 
 	const addId = (arr) => {

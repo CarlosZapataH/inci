@@ -8,6 +8,7 @@ import HelmetSvg from '@src/components/search/elements/HelmetSvg.jsx';
 import * as serviceUsers from '@src/features/staff/service/staff.service.js';
 import { showValidationErrors } from '@src/helpers/listValidation';
 import { useParams } from 'react-router-dom';
+import OfflineUsersSelect from '@src/components/search/elements/OfflineUsersSelect.jsx';
 
 import {
 	Box,
@@ -44,6 +45,7 @@ const PesonalSearch = () => {
 	const [qualifications, setQualifications] = useState([]);
 	const [procedures, setProcedures] = useState([]);
 	const [helmetHistory, setHelmetHistory] = useState([]);
+	const [users, setUsers] = useState([]);
 	const [mentors, setMentors] = useState([]);
 	const [currentTab, setCurrentTab] = useState(0);
 
@@ -62,7 +64,7 @@ const PesonalSearch = () => {
 			window.addEventListener('online', goOnline);
 			window.addEventListener('offline', goOffline);
 		}
-		verifyConnection();
+
 		return () => {
 			if (window) {
 				window.removeEventListener('online', goOnline);
@@ -113,8 +115,8 @@ const PesonalSearch = () => {
 
 	const getUsers = async () => {
 		try {
-			//const userDocument = localStorage.getItem('userDocument');
 			const response = await serviceUsers.listUsers();
+			setUsers(response?.personas || []);
 			getCourses(response?.personas || null);
 		} catch (error) {
 			showValidationErrors(error);
@@ -163,6 +165,10 @@ const PesonalSearch = () => {
 		return 0;
 	};
 
+	useEffect(() => {
+		verifyConnection();
+	}, [location.pathname]);
+
 	return (
 		<div id="PesonalSearch">
 			<Box bgcolor={'primary.main'} paddingY={2}>
@@ -189,6 +195,7 @@ const PesonalSearch = () => {
 						paddingBottom: 1,
 					}}
 				>
+					{!online && <OfflineUsersSelect users={users} getUsers={getUsers} />}
 					{userSiscap && userSiscap?.nroDocumento && (
 						<div>
 							<Box
