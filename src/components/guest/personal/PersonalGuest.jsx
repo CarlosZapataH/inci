@@ -249,7 +249,10 @@ const PesonalSearch = () => {
 														Nombre Completo:
 													</td>
 													<td>
-														{userSiscap?.apellidosNombres}
+														{userSiscap
+															?.user_update_information
+															?.fullName ||
+															userSiscap?.apellidosNombres}
 													</td>
 												</tr>
 												<tr>
@@ -262,13 +265,19 @@ const PesonalSearch = () => {
 													<td style={{ color: '#0039a6' }}>
 														Cargo:
 													</td>
-													<td>{userSiscap?.puesto}</td>
+													<td>
+														{userSiscap?.nombrePuesto ||
+															userSiscap?.puesto}
+													</td>
 												</tr>
 												<tr>
 													<td style={{ color: '#0039a6' }}>
 														Servicio:
 													</td>
-													<td>{userSiscap?.servicio}</td>
+													<td>
+														{userSiscap?.nombreServicio ||
+															userSiscap?.servicio}
+													</td>
 												</tr>
 												{userSiscap?.fechaInicio && (
 													<tr>
