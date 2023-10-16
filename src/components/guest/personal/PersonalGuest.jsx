@@ -57,6 +57,7 @@ const PesonalSearch = () => {
 
 	function goOffline() {
 		setOnline(false);
+		getUsers();
 	}
 
 	useEffect(() => {
@@ -155,10 +156,24 @@ const PesonalSearch = () => {
 		}
 	};
 
+	const printEntryDate = (date) => {
+		if (date) {
+			try {
+				moment.locale('es');
+				const formatDate = online ? 'DD-MM-YYYY' : 'M/D/YYYY h:mm:ss A';
+				return moment(date, formatDate).format('L');
+			} catch (error) {
+				return date || '';
+			}
+		}
+		return date || '';
+	};
+
 	const printDayDiff = (date) => {
 		if (date) {
 			moment.locale('es');
-			const startDate = moment(date, 'DD-MM-YYYY');
+			const formatDate = online ? 'DD-MM-YYYY' : 'M/D/YYYY h:mm:ss A';
+			const startDate = moment(date, formatDate);
 			const currentDate = moment();
 			return currentDate.diff(startDate, 'days');
 		}
@@ -249,10 +264,7 @@ const PesonalSearch = () => {
 														Nombre Completo:
 													</td>
 													<td>
-														{userSiscap
-															?.user_update_information
-															?.fullName ||
-															userSiscap?.apellidosNombres}
+														{userSiscap?.apellidosNombres}
 													</td>
 												</tr>
 												<tr>
@@ -284,7 +296,11 @@ const PesonalSearch = () => {
 														<td style={{ color: '#0039a6' }}>
 															Fecha de ingreso:
 														</td>
-														<td>{userSiscap?.fechaInicio}</td>
+														<td>
+															{printEntryDate(
+																userSiscap?.fechaInicio
+															)}
+														</td>
 													</tr>
 												)}
 												<tr>

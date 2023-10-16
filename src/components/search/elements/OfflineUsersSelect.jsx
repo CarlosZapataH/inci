@@ -56,7 +56,7 @@ const OfflineUsersSelect = (props) => {
 					loading={loadingUser}
 					onChange={handleAutocompleteChange}
 					filterOptions={filterOptions}
-					getOptionLabel={(option) => option?.user_update_information?.fullName}
+					getOptionLabel={(option) => option?.apellidosNombres}
 					renderInput={(params) => (
 						<div>
 							<TextField
