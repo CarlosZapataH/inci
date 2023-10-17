@@ -9,6 +9,7 @@ import * as serviceUsers from '@src/features/staff/service/staff.service.js';
 import { showValidationErrors } from '@src/helpers/listValidation';
 import { useParams } from 'react-router-dom';
 import OfflineUsersSelect from '@src/components/search/elements/OfflineUsersSelect.jsx';
+import { useSnackbar } from '@src/components/global/SnackbarHelper/SnackbarHelper.js';
 
 import {
 	Box,
@@ -28,6 +29,7 @@ import { getCourseSiscapByUser } from '@src/features/course/service/course';
 import moment from 'moment';
 import TabPanel from '@src/components/global/TabPanel/TabPanel';
 import MentorTable from '@src/components/search/elements/MentorTable';
+import OfflineBar from '@src/components/global/OfflineBar/OfflineBar';
 
 const breadcrumbs = [
 	{ value: '/login', text: 'Inicio' },
@@ -48,8 +50,8 @@ const PesonalSearch = () => {
 	const [users, setUsers] = useState([]);
 	const [mentors, setMentors] = useState([]);
 	const [currentTab, setCurrentTab] = useState(0);
-
 	const [online, setOnline] = useState(navigator ? navigator.onLine : true);
+	const { showSnackbar, SnackbarComponent } = useSnackbar();
 
 	function goOnline() {
 		setOnline(true);
@@ -116,9 +118,11 @@ const PesonalSearch = () => {
 
 	const getUsers = async () => {
 		try {
-			const response = await serviceUsers.listUsers();
-			setUsers(response?.personas || []);
-			getCourses(response?.personas || null);
+			if (await verifycache()) {
+				const response = await serviceUsers.listUsers();
+				setUsers(response?.personas || []);
+				getCourses(response?.personas || null);
+			}
 		} catch (error) {
 			showValidationErrors(error);
 		} finally {
@@ -152,6 +156,8 @@ const PesonalSearch = () => {
 					setHelmetHistory(addId(helmet_history || []));
 				if (Array.isArray(coach_history)) setMentors(addId(coach_history || []));
 				setUserSiscap(currentUser);
+			} else {
+				showSnackbar('Usuario no encontrado', 'warning');
 			}
 		}
 	};
@@ -180,6 +186,16 @@ const PesonalSearch = () => {
 		return 0;
 	};
 
+	const verifycache = async () => {
+		try {
+			const cacheName = 'siscap-users-cache';
+			const cacheNames = await caches.keys();
+			return [...cacheNames].includes(cacheName);
+		} catch (error) {
+			return false;
+		}
+	};
+
 	useEffect(() => {
 		verifyConnection();
 	}, [location.pathname]);
@@ -200,6 +216,7 @@ const PesonalSearch = () => {
 					</Typography>
 				</Container>
 			</Box>
+			<OfflineBar />
 			{loadingCourse && <LinearProgress />}
 			<CustomBreadcrumbs breadcrumbs={breadcrumbs} />
 
@@ -230,12 +247,15 @@ const PesonalSearch = () => {
 							>
 								<Grid container>
 									<Grid item xs={12} md={'auto'}>
-										<div
-											style={{
+										<Box
+											sx={{
 												height: 'auto',
-												margin: '0 auto',
 												maxWidth: 190,
 												width: '100%',
+												margin: {
+													xs: '0 auto 10px',
+													md: '0 auto',
+												},
 											}}
 										>
 											<QRCode
@@ -248,7 +268,7 @@ const PesonalSearch = () => {
 												value={valueQr}
 												viewBox={`0 0 256 256`}
 											/>
-										</div>
+										</Box>
 									</Grid>
 									<Hidden mdDown>
 										<Divider
@@ -396,11 +416,9 @@ const PesonalSearch = () => {
 							</Grid>
 						</div>
 					)}
-					{!loadingCourse && !userSiscap?.nroDocumento && (
-						<div>Usuario no encontrado</div>
-					)}
 				</Box>
 			</Container>
+			{SnackbarComponent}
 		</div>
 	);
 };
