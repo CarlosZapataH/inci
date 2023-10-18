@@ -216,7 +216,7 @@ const PesonalSearch = () => {
 					</Typography>
 				</Container>
 			</Box>
-			<OfflineBar />
+			<OfflineBar online={online} />
 			{loadingCourse && <LinearProgress />}
 			<CustomBreadcrumbs breadcrumbs={breadcrumbs} />
 

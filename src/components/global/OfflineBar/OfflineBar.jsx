@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import WifiOffIcon from '@mui/icons-material/WifiOff';
 import { Box, Container, Typography } from '@mui/material';
 
-const OfflineBar = () => {
-	const [online, setOnline] = useState(navigator ? navigator.onLine : true);
+const OfflineBar = ({ online }) => {
 	const [savedUsers, setSavedUsers] = useState(false);
 
 	const verifycache = async () => {
@@ -17,30 +16,9 @@ const OfflineBar = () => {
 		}
 	};
 
-	const goOnline = () => {
-		verifycache();
-		setOnline(true);
-	};
-
-	const goOffline = async () => {
-		verifycache();
-		setOnline(false);
-	};
-
 	useEffect(() => {
-		if (window) {
-			verifycache();
-			window.addEventListener('online', goOnline);
-			window.addEventListener('offline', goOffline);
-		}
-
-		return () => {
-			if (window) {
-				window.removeEventListener('online', goOnline);
-				window.removeEventListener('offline', goOffline);
-			}
-		};
-	}, []);
+		verifycache();
+	}, [online]);
 
 	return (
 		<div>
