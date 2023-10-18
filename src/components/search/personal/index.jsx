@@ -108,12 +108,12 @@ const PesonalSearch = () => {
 
 	const checkConnection = () => {
 		if (!window.navigator.onLine) {
-			navigate('/guest/personal/' + (userSession?.document || '0'));
+			navigate('/guest/personal/0');
 		}
 	};
 
 	const handleOnlineStatusChange = () => {
-		navigate('/guest/personal/' + (userSession?.document || '0'));
+		navigate('/guest/personal/0');
 	};
 
 	useEffect(() => {

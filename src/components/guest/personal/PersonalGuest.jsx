@@ -131,7 +131,7 @@ const PesonalSearch = () => {
 	};
 
 	const getCourses = async (personas) => {
-		if (Array.isArray(personas) && userDocument) {
+		if (Array.isArray(personas) && userDocument && userDocument != 0) {
 			const found = personas.find(
 				(personal) =>
 					(personal?.nroDocumento || '').trim() == (userDocument || '').trim()
