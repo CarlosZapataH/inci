@@ -3,6 +3,7 @@ body,
 #root {
 	height: 100%;
 	font-family: 'Roboto', sans-serif;
+	margin: 0;
 }
 body.body {
 	height: 100% !important;
@@ -83,5 +84,18 @@ table.custom-vertical-table {
 				color: grey;
 			}
 		}
+	}
+}
+
+#error-page {
+	width: 100%;
+	height: calc(100% - 16px);
+	box-sizing: border-box;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	h1 {
+		margin-top: 0;
 	}
 }

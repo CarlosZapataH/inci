@@ -8,11 +8,13 @@ import GeneralSearchPage from '@src/pages/search/general/GeneralSearch';
 import PesonalSearchPage from '@src/pages/search/personal/PesonalSearch';
 import PersonalGuestPage from '@src/pages/guest/personal/PersonalGuest.js';
 import UserPermissionsPage from '@src/pages/user/permissions/UserPermissions.js';
+import ErrorPage from '@src/components/global/ErrorPage/ErrorPage.jsx';
 
 const router = createBrowserRouter([
 	{
 		path: '/',
 		element: <Login />,
+		errorElement: <ErrorPage />,
 	},
 	{
 		path: '/login',
@@ -52,6 +54,11 @@ const router = createBrowserRouter([
 			},
 		],
 	},
+	// {
+	// 	path: '/',
+	// 	element: <Root />,
+		
+	// },
 ]);
 
 // DELETE ROUTES
