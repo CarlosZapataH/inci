@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 //import QRCode from 'react-qr-code';
 import QRCodeReact from 'qrcode.react';
-import { listUsers } from '@src/features/course/courseSlice';
+//import { listUsers } from '@src/features/course/courseSlice';
 import SearchTabs from '@src/components/search/elements/SearchTabs.jsx';
 import CustomBreadcrumbs from '@src/components/global/CustomBreadcrumbs/index.jsx';
 import { getCourseSiscapByUser } from '@src/features/course/service/course.js';
@@ -15,6 +15,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import HelmetTable from '@src/components/search/elements/HelmetTable.jsx';
 import UsersDownloadButton from '@src/components/search/elements/UsersDownloadButton.jsx';
 import AssignMentorDialog from '@src/components/search/elements/AssignMentorDialog.jsx';
+import { listUsers } from '@src/features/staff/service/staff.service.js';
 
 import {
 	Autocomplete,
@@ -45,7 +46,7 @@ const breadcrumbs = [
 	{ value: '/search/personal', text: 'Búsqueda de Personal' },
 ];
 
-const PesonalSearch = () => {
+const PersonalSearch = () => {
 	const dispatch = useDispatch();
 
 	const hasPermission = useSelector((state) =>
@@ -59,7 +60,7 @@ const PesonalSearch = () => {
 	const theme = useTheme();
 	const navigate = useNavigate();
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-	const users = useSelector((state) => state.course.users);
+	//const users = useSelector((state) => state.course.users);
 	const courses = useSelector((state) => state.course.coursesByUser);
 	const userSession = useSelector((state) => state.auth.user);
 	const [selectedUser, setSelectedUser] = useState(null);
@@ -67,6 +68,7 @@ const PesonalSearch = () => {
 	const [loadingUser, setLoadingUser] = useState(false);
 	const [loadingCourse, setLoadingCourse] = useState(false);
 	const [userSiscap, setUserSiscap] = useState(null);
+	const [users, setUsers] = useState([]);
 
 	const [trainings, setTrainings] = useState([]);
 	const [qualifications, setQualifications] = useState([]);
@@ -88,7 +90,7 @@ const PesonalSearch = () => {
 
 	const handleAutocompleteChange = (event, value) => {
 		setSelectedUser(value);
-		setFilters({ ...filters, user_id: value?.id || null });
+		//setFilters({ ...filters, user_id: value?.id || null });
 		setValueQr(window.location.origin + '/guest/personal/' + value?.document);
 		if (value && value?.document) {
 			getCourses(value?.document);
@@ -134,9 +136,25 @@ const PesonalSearch = () => {
 	};
 
 	const getUsers = async () => {
-		setLoadingUser(true);
-		await dispatch(listUsers());
-		setLoadingUser(false);
+		try {
+			setLoadingUser(true);
+			const { personas } = await listUsers();
+			if (Array.isArray(personas)) {
+				const parsed = personas.map((user, index) => {
+					return {
+						...user,
+						fullName: user?.apellidosNombres,
+						document: user?.nroDocumento,
+						key: `${user?.nroDocumento}-${index}`,
+					};
+				});
+				setUsers(parsed || []);
+			}
+		} catch (error) {
+			showValidationErrors(error);
+		} finally {
+			setLoadingUser(false);
+		}
 	};
 
 	const getCourses = async (document) => {
@@ -256,6 +274,11 @@ const PesonalSearch = () => {
 							onChange={handleAutocompleteChange}
 							filterOptions={filterOptions}
 							getOptionLabel={(option) => option?.fullName}
+							renderOption={(props, option) => (
+								<li {...props} key={option?.key}>
+									{option?.fullName}
+								</li>
+							)}
 							renderInput={(params) => (
 								<div>
 									<TextField
@@ -267,7 +290,7 @@ const PesonalSearch = () => {
 							)}
 						/>
 					</Box>
-					{selectedUser && selectedUser?.id && (
+					{selectedUser && selectedUser?.nroDocumento && (
 						<Box
 							sx={{
 								width: 'fit-content',
@@ -443,7 +466,7 @@ const PesonalSearch = () => {
 						</Box>
 					)}
 				</Box>
-				{selectedUser && selectedUser?.id && (
+				{selectedUser && selectedUser?.nroDocumento && (
 					<Box
 						sx={{
 							backgroundColor: 'white.main',
@@ -459,7 +482,7 @@ const PesonalSearch = () => {
 					</Box>
 				)}
 
-				{selectedUser && selectedUser?.id && (
+				{selectedUser && selectedUser?.nroDocumento && (
 					<Box
 						sx={{
 							backgroundColor: 'white.main',
@@ -473,7 +496,7 @@ const PesonalSearch = () => {
 					</Box>
 				)}
 
-				{selectedUser && selectedUser?.id && (
+				{selectedUser && selectedUser?.nroDocumento && (
 					<Box
 						sx={{
 							backgroundColor: 'white.main',
@@ -520,4 +543,4 @@ const PesonalSearch = () => {
 	);
 };
 
-export default PesonalSearch;
+export default PersonalSearch;

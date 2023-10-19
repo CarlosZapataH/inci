@@ -7,14 +7,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import AccountIcon from '@mui/icons-material/Person';
-import {
-	Autocomplete,
-	FormControl,
-	InputLabel,
-	LinearProgress,
-	MenuItem,
-	Select,
-} from '@mui/material';
+import { Autocomplete, LinearProgress } from '@mui/material';
 import * as staffService from '@src/features/staff/service/staff.service.js';
 import { showValidationErrors } from '@src/helpers/listValidation';
 import * as securityService from '@src/features/security/service/security.service.js';
@@ -65,11 +58,23 @@ const assignMentorDialog = ({ helmetcolor, user, getCourses, userDocument }) => 
 		}
 	};
 
+	const parseUsers = (users) => {
+		if (Array.isArray(users)) {
+			const result = users.map((user, index) => {
+				const newKey = `${user?.document}-${index}`;
+				return { ...user, newKey };
+			});
+			return result;
+		}
+		return users;
+	};
+
 	const getUsers = async (filters) => {
 		try {
 			setIsLoadingUsers(true);
 			const response = await securityService.searchUsers(filters);
-			setUsers(response?.data);
+			const listUsers = response?.data || [];
+			setUsers(parseUsers(listUsers));
 		} catch (error) {
 			showValidationErrors(error);
 		} finally {
@@ -101,6 +106,11 @@ const assignMentorDialog = ({ helmetcolor, user, getCourses, userDocument }) => 
 						getOptionLabel={(user) => user.fullName}
 						onChange={handleChange}
 						loading={isLoadingUsers}
+						renderOption={(props, option) => (
+							<li {...props} key={option?.newKey}>
+								{`${option?.fullName} - ${option?.document}`}
+							</li>
+						)}
 						renderInput={(params) => <TextField {...params} label="Mentor" />}
 					/>
 				</DialogContent>
