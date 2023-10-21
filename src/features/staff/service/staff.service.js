@@ -29,6 +29,17 @@ const listUsers = async (payload) => {
 	}
 };
 
+const listAllUser = async (payload) => {
+	try {
+		const { data } = await http.get('/siscap/users/all', {
+			params: { ...payload },
+		});
+		return data || null;
+	} catch (error) {
+		return Promise.reject(error);
+	}
+};
+
 const getUsersFile = async (payload) => {
 	try {
 		const { data } = await http.get('/siscap/users/download', {
@@ -40,4 +51,4 @@ const getUsersFile = async (payload) => {
 	}
 };
 
-export { updateHelmet, listUsers, getUsersFile, assignMentor };
+export { updateHelmet, listUsers, getUsersFile, assignMentor, listAllUser };

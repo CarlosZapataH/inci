@@ -1,8 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-//import QRCode from 'react-qr-code';
+import { useSelector } from 'react-redux';
 import QRCodeReact from 'qrcode.react';
-//import { listUsers } from '@src/features/course/courseSlice';
 import SearchTabs from '@src/components/search/elements/SearchTabs.jsx';
 import CustomBreadcrumbs from '@src/components/global/CustomBreadcrumbs/index.jsx';
 import { getCourseSiscapByUser } from '@src/features/course/service/course.js';
@@ -10,13 +8,20 @@ import TrainingTable from '@src/components/search/elements/TrainingTable.jsx';
 import QualificationsTable from '@src/components/search/elements/QualificationsTable.jsx';
 import ProceduresTable from '@src/components/search/elements/ProceduresTable.jsx';
 import HelmetSvg from '@src/components/search/elements/HelmetSvg.jsx';
-import UpdateUserDialog from '@src/components/search/elements/UpdateUserDialog.jsx';
+import UpdateHelmetDialog from '@src/components/search/elements/UpdateHelmetDialog.jsx';
 import DownloadIcon from '@mui/icons-material/Download';
 import HelmetTable from '@src/components/search/elements/HelmetTable.jsx';
 import UsersDownloadButton from '@src/components/search/elements/UsersDownloadButton.jsx';
 import AssignMentorDialog from '@src/components/search/elements/AssignMentorDialog.jsx';
-import { listUsers } from '@src/features/staff/service/staff.service.js';
+import ServicesSelect from '@src/components/search/elements/ServicesSelect.jsx';
+import { listAllUser } from '@src/features/staff/service/staff.service.js';
 
+import { showValidationErrors } from '@src/helpers/listValidation';
+import { checkPermissions } from '@src/features/auth/authSelector';
+import moment from 'moment';
+import TabPanel from '@src/components/global/TabPanel/TabPanel.jsx';
+import MentorTable from '../elements/MentorTable';
+import { useNavigate } from 'react-router-dom';
 import {
 	Autocomplete,
 	Box,
@@ -33,13 +38,6 @@ import {
 	useMediaQuery,
 	useTheme,
 } from '@mui/material';
-import { showValidationErrors } from '@src/helpers/listValidation';
-import { checkPermissions } from '@src/features/auth/authSelector';
-import moment from 'moment';
-import TabPanel from '@src/components/global/TabPanel/TabPanel.jsx';
-import MentorTable from '../elements/MentorTable';
-import { useNavigate } from 'react-router-dom';
-//import { TabContext, TabList, TabPanel } from '@mui/lab';
 
 const breadcrumbs = [
 	{ value: '/dashboard', text: 'Inicio' },
@@ -47,22 +45,20 @@ const breadcrumbs = [
 ];
 
 const PersonalSearch = () => {
-	const dispatch = useDispatch();
-
-	const hasPermission = useSelector((state) =>
+	const hasPermissionHelmet = useSelector((state) =>
 		checkPermissions(state)(
 			'busquedaPersonal',
 			'busquedaPersonal',
 			'CambiarColorCasco'
 		)
 	);
+	const hasPermissionMentor = useSelector((state) =>
+		checkPermissions(state)('busquedaPersonal', 'busquedaPersonal', 'AsignarMentor')
+	);
 
 	const theme = useTheme();
 	const navigate = useNavigate();
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-	//const users = useSelector((state) => state.course.users);
-	const courses = useSelector((state) => state.course.coursesByUser);
-	const userSession = useSelector((state) => state.auth.user);
 	const [selectedUser, setSelectedUser] = useState(null);
 	const [valueQr, setValueQr] = useState(null);
 	const [loadingUser, setLoadingUser] = useState(false);
@@ -76,23 +72,17 @@ const PersonalSearch = () => {
 	const [helmetHistory, setHelmetHistory] = useState([]);
 	const [currentTab, setCurrentTab] = useState(0);
 	const [mentors, setMentors] = useState([]);
-
-	const [filters, setFilters] = useState({
-		page: 1,
-		pagination: true,
-		user_id: null,
-		per_page: process.env.REACT_APP_PAGINATION_PER_PAGE || 10,
-	});
+	const [services, setServices] = useState([]);
+	const [currentService, setCurrentService] = useState(null);
 
 	const handleChangeTab = (event, newValue) => {
 		setCurrentTab(newValue);
 	};
 
-	const handleAutocompleteChange = (event, value) => {
-		setSelectedUser(value);
-		//setFilters({ ...filters, user_id: value?.id || null });
-		setValueQr(window.location.origin + '/guest/personal/' + value?.document);
+	const handleAutocompleteChange = (_, value) => {
 		if (value && value?.document) {
+			setSelectedUser(value);
+			setValueQr(window.location.origin + '/guest/personal/' + value?.document);
 			getCourses(value?.document);
 		}
 	};
@@ -111,6 +101,9 @@ const PersonalSearch = () => {
 	const checkConnection = () => {
 		if (!window.navigator.onLine) {
 			navigate('/guest/personal/0');
+			return false;
+		} else {
+			return true;
 		}
 	};
 
@@ -118,9 +111,29 @@ const PersonalSearch = () => {
 		navigate('/guest/personal/0');
 	};
 
+	const listenServiceChange = (value) => {
+		setCurrentService(value);
+
+		const {
+			capacitaciones,
+			habilitaciones,
+			procedimientos,
+			helmet_history,
+			coach_history,
+		} = value;
+
+		setTrainings(Array.isArray(capacitaciones) ? addId(capacitaciones) : []);
+		setProcedures(Array.isArray(procedimientos) ? addId(procedimientos) : []);
+		setQualifications(Array.isArray(habilitaciones) ? addId(habilitaciones) : []);
+		setHelmetHistory(Array.isArray(helmet_history) ? addId(helmet_history) : []);
+		setMentors(Array.isArray(coach_history) ? addId(coach_history) : []);
+	};
+
 	useEffect(() => {
-		checkConnection();
-		getUsers();
+		const hasConnection = checkConnection();
+		if (hasConnection) {
+			getUsers();
+		}
 		window.addEventListener('offline', handleOnlineStatusChange);
 		return () => {
 			window.removeEventListener('offline', handleOnlineStatusChange);
@@ -138,12 +151,12 @@ const PersonalSearch = () => {
 	const getUsers = async () => {
 		try {
 			setLoadingUser(true);
-			const { personas } = await listUsers();
-			if (Array.isArray(personas)) {
-				const parsed = personas.map((user, index) => {
+			const { personaLaborals } = await listAllUser();
+			if (Array.isArray(personaLaborals)) {
+				const parsed = personaLaborals.map((user, index) => {
 					return {
 						...user,
-						fullName: user?.apellidosNombres,
+						fullName: `${user?.nombres} ${user?.apellidoPaterno} ${user?.apellidoMaterno}`,
 						document: user?.nroDocumento,
 						key: `${user?.nroDocumento}-${index}`,
 					};
@@ -168,38 +181,38 @@ const PersonalSearch = () => {
 			],
 		};
 		try {
-			const response = await getCourseSiscapByUser(data);
-			if (response && response?.personas && response?.personas[0]) {
-				const {
-					capacitaciones,
-					habilitaciones,
-					procedimientos,
-					helmet_history,
-					coach_history,
-					...currentUser
-				} = response?.personas[0];
-				setUserSiscap(currentUser);
-				if (Array.isArray(capacitaciones)) setTrainings(addId(capacitaciones));
-				if (Array.isArray(habilitaciones))
-					setQualifications(addId(habilitaciones));
-				if (Array.isArray(procedimientos))
-					setProcedures(addId(procedimientos || []));
-				if (Array.isArray(helmet_history || []))
-					setHelmetHistory(addId(helmet_history));
-				if (Array.isArray(coach_history)) setMentors(addId(coach_history || []));
+			const { personas } = await getCourseSiscapByUser(data);
+			if (Array.isArray(personas)) {
+				const user = personas.find((user) => user?.nroDocumento == document);
+				if (user) {
+					const { services, ...currentUser } = user;
+					setServices(services);
+					setUserSiscap(currentUser);
+					if (Array.isArray(services) && services.length === 1) {
+						listenServiceChange(services[0]);
+					}
+				} else {
+					cleanTables();
+				}
 			} else {
-				setUserSiscap(null);
-				setTrainings([]);
-				setQualifications([]);
-				setProcedures([]);
-				setHelmetHistory([]);
-				setMentors([]);
+				cleanTables();
 			}
 		} catch (error) {
 			showValidationErrors(error);
 		} finally {
 			setLoadingCourse(false);
 		}
+	};
+
+	const cleanTables = () => {
+		setUserSiscap(null);
+		setTrainings([]);
+		setProcedures([]);
+		setQualifications([]);
+		setHelmetHistory([]);
+		setMentors([]);
+		setServices([]);
+		setCurrentService(null);
 	};
 
 	const qrCodeRef = useRef(null);
@@ -220,7 +233,9 @@ const PersonalSearch = () => {
 	const printDayDiff = (date) => {
 		if (date) {
 			moment.locale('es');
-			const startDate = moment(date, 'DD-MM-YYYY');
+			const length = (date || '').length;
+			const formatDate = length > 10 ? 'M/D/YYYY h:mm:ss A' : 'DD-MM-YYYY';
+			const startDate = moment(date, formatDate);
 			const currentDate = moment();
 			return currentDate.diff(startDate, 'days');
 		}
@@ -269,7 +284,7 @@ const PersonalSearch = () => {
 							disablePortal
 							id="combo-box-demo"
 							options={users}
-							sx={{ width: '100%' }}
+							sx={{ width: '100%', marginBottom: 2 }}
 							loading={loadingUser}
 							onChange={handleAutocompleteChange}
 							filterOptions={filterOptions}
@@ -289,6 +304,13 @@ const PersonalSearch = () => {
 								</div>
 							)}
 						/>
+						{Array.isArray(services) && services.length > 1 && (
+							<ServicesSelect
+								services={services}
+								currentService={currentService}
+								setCurrentService={listenServiceChange}
+							/>
+						)}
 					</Box>
 					{selectedUser && selectedUser?.nroDocumento && (
 						<Box
@@ -383,12 +405,14 @@ const PersonalSearch = () => {
 												</td>
 												<td>{selectedUser?.email}</td>
 											</tr>
-											{userSiscap?.servicio && (
+											{currentService?.nombreServicio && (
 												<tr>
 													<td style={{ color: '#0039a6' }}>
 														Servicio:
 													</td>
-													<td>{userSiscap?.servicio}</td>
+													<td>
+														{currentService?.nombreServicio}
+													</td>
 												</tr>
 											)}
 											{userSiscap?.fechaInicio && (
@@ -417,7 +441,7 @@ const PersonalSearch = () => {
 													<div>
 														<HelmetSvg
 															fillColor={
-																userSiscap?.helmet ||
+																currentService?.helmet ||
 																'green'
 															}
 														/>
@@ -426,19 +450,22 @@ const PersonalSearch = () => {
 											</tr>
 										</tbody>
 									</table>
-									{!!hasPermission && (
+									{!!hasPermissionHelmet && currentService && (
 										<Box
 											height="initial"
 											minHeight="initial"
 											display={'flex'}
 											justifyContent={'flex-end'}
 										>
-											<UpdateUserDialog
+											<UpdateHelmetDialog
 												helmetcolor={
-													userSiscap?.helmet || 'green'
+													currentService?.helmet || 'green'
 												}
 												user={userSiscap}
 												getCourses={getCourses}
+												serviceCode={
+													currentService?.codigoServicio
+												}
 												userDocument={
 													userSiscap?.nroDocumento ||
 													selectedUser?.document
@@ -446,7 +473,7 @@ const PersonalSearch = () => {
 											/>
 										</Box>
 									)}
-									{!!hasPermission && (
+									{!!hasPermissionMentor && currentService && (
 										<Box
 											height="initial"
 											display={'flex'}
@@ -454,6 +481,9 @@ const PersonalSearch = () => {
 										>
 											<AssignMentorDialog
 												getCourses={getCourses}
+												serviceCode={
+													currentService?.codigoServicio
+												}
 												userDocument={
 													userSiscap?.nroDocumento ||
 													selectedUser?.document

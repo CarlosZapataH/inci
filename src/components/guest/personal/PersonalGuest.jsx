@@ -1,16 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import QRCode from 'react-qr-code';
-import CustomBreadcrumbs from '@src/components/global/CustomBreadcrumbs/index.jsx';
-import TrainingTable from '@src/components/search/elements/TrainingTable.jsx';
-import QualificationsTable from '@src/components/search/elements/QualificationsTable.jsx';
-import ProceduresTable from '@src/components/search/elements/ProceduresTable.jsx';
-import HelmetSvg from '@src/components/search/elements/HelmetSvg.jsx';
+import moment from 'moment';
+
 import * as serviceUsers from '@src/features/staff/service/staff.service.js';
+import QualificationsTable from '@src/components/search/elements/QualificationsTable.jsx';
+import OfflineUsersSelect from '@src/components/search/elements/OfflineUsersSelect.jsx';
+import CustomBreadcrumbs from '@src/components/global/CustomBreadcrumbs/index.jsx';
+import ProceduresTable from '@src/components/search/elements/ProceduresTable.jsx';
+import TrainingTable from '@src/components/search/elements/TrainingTable.jsx';
+import ServicesSelect from '@src/components/search/elements/ServicesSelect';
+import HelmetSvg from '@src/components/search/elements/HelmetSvg.jsx';
+import MentorTable from '@src/components/search/elements/MentorTable';
+import HelmetTable from '@src/components/search/elements/HelmetTable';
+import OfflineBar from '@src/components/global/OfflineBar/OfflineBar';
+import TabPanel from '@src/components/global/TabPanel/TabPanel';
+
+import { useSnackbar } from '@src/components/global/SnackbarHelper/SnackbarHelper.js';
+import { getCourseSiscapByUser } from '@src/features/course/service/course';
 import { showValidationErrors } from '@src/helpers/listValidation';
 import { useParams } from 'react-router-dom';
-import OfflineUsersSelect from '@src/components/search/elements/OfflineUsersSelect.jsx';
-import { useSnackbar } from '@src/components/global/SnackbarHelper/SnackbarHelper.js';
-
 import {
 	Box,
 	Container,
@@ -24,12 +32,6 @@ import {
 	useMediaQuery,
 	useTheme,
 } from '@mui/material';
-import HelmetTable from '@src/components/search/elements/HelmetTable';
-import { getCourseSiscapByUser } from '@src/features/course/service/course';
-import moment from 'moment';
-import TabPanel from '@src/components/global/TabPanel/TabPanel';
-import MentorTable from '@src/components/search/elements/MentorTable';
-import OfflineBar from '@src/components/global/OfflineBar/OfflineBar';
 
 const breadcrumbs = [
 	{ value: '/login', text: 'Inicio' },
@@ -38,20 +40,25 @@ const breadcrumbs = [
 
 const PesonalSearch = () => {
 	const theme = useTheme();
-	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 	const { userDocument } = useParams();
+	const { showSnackbar, SnackbarComponent } = useSnackbar();
+	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
 	const [valueQr, setValueQr] = useState(null);
-	const [loadingCourse, setLoadingCourse] = useState(false);
 	const [userSiscap, setUserSiscap] = useState(null);
-	const [trainings, setTrainings] = useState([]);
-	const [qualifications, setQualifications] = useState([]);
-	const [procedures, setProcedures] = useState([]);
-	const [helmetHistory, setHelmetHistory] = useState([]);
+	const [loadingCourse, setLoadingCourse] = useState(false);
+
 	const [users, setUsers] = useState([]);
 	const [mentors, setMentors] = useState([]);
+	const [trainings, setTrainings] = useState([]);
+	const [procedures, setProcedures] = useState([]);
+	const [helmetHistory, setHelmetHistory] = useState([]);
+	const [qualifications, setQualifications] = useState([]);
+
 	const [currentTab, setCurrentTab] = useState(0);
+	const [services, setServices] = useState([]);
+	const [currentService, setCurrentService] = useState(null);
 	const [online, setOnline] = useState(navigator ? navigator.onLine : true);
-	const { showSnackbar, SnackbarComponent } = useSnackbar();
 
 	function goOnline() {
 		setOnline(true);
@@ -108,7 +115,7 @@ const PesonalSearch = () => {
 				],
 			};
 			const response = await getCourseSiscapByUser(data);
-			getCourses(response?.personas || null);
+			filterUserDetails(response?.personas || null);
 		} catch (error) {
 			getUsers();
 		} finally {
@@ -121,7 +128,7 @@ const PesonalSearch = () => {
 			if (await verifycache()) {
 				const response = await serviceUsers.listUsers();
 				setUsers(response?.personas || []);
-				getCourses(response?.personas || null);
+				filterUserDetails(response?.personas || null);
 			}
 		} catch (error) {
 			showValidationErrors(error);
@@ -130,43 +137,65 @@ const PesonalSearch = () => {
 		}
 	};
 
-	const getCourses = async (personas) => {
+	const filterUserDetails = async (personas) => {
 		if (Array.isArray(personas) && userDocument && userDocument != 0) {
-			const found = personas.find(
-				(personal) =>
+			const user = personas.find((personal) => {
+				return (
 					(personal?.nroDocumento || '').trim() == (userDocument || '').trim()
-			);
-			if (found) {
-				setValueQr(window.location.href);
-				const {
-					capacitaciones,
-					habilitaciones,
-					procedimientos,
-					helmet_history,
-					coach_history,
-					...currentUser
-				} = found;
-				if (Array.isArray(capacitaciones))
-					setTrainings(addId(capacitaciones || []));
-				if (Array.isArray(habilitaciones))
-					setQualifications(addId(habilitaciones || []));
-				if (Array.isArray(procedimientos))
-					setProcedures(addId(procedimientos || []));
-				if (Array.isArray(helmet_history))
-					setHelmetHistory(addId(helmet_history || []));
-				if (Array.isArray(coach_history)) setMentors(addId(coach_history || []));
+				);
+			});
+			if (user) {
+				const { services, ...currentUser } = user;
+				setServices(services);
 				setUserSiscap(currentUser);
+				setValueQr(window.location.href);
+				if (Array.isArray(services) && services.length === 1) {
+					listenServiceChange(services[0]);
+				}
 			} else {
+				cleanTables();
 				showSnackbar('Usuario no encontrado', 'warning');
 			}
+		} else {
+			cleanTables();
 		}
+	};
+
+	const listenServiceChange = (value) => {
+		setCurrentService(value);
+
+		const {
+			capacitaciones,
+			habilitaciones,
+			procedimientos,
+			helmet_history,
+			coach_history,
+		} = value;
+
+		setTrainings(Array.isArray(capacitaciones) ? addId(capacitaciones) : []);
+		setProcedures(Array.isArray(procedimientos) ? addId(procedimientos) : []);
+		setQualifications(Array.isArray(habilitaciones) ? addId(habilitaciones) : []);
+		setHelmetHistory(Array.isArray(helmet_history) ? addId(helmet_history) : []);
+		setMentors(Array.isArray(coach_history) ? addId(coach_history) : []);
+	};
+
+	const cleanTables = () => {
+		setUserSiscap(null);
+		setTrainings([]);
+		setProcedures([]);
+		setQualifications([]);
+		setHelmetHistory([]);
+		setMentors([]);
+		setServices([]);
+		setCurrentService(null);
 	};
 
 	const printEntryDate = (date) => {
 		if (date) {
 			try {
 				moment.locale('es');
-				const formatDate = online ? 'DD-MM-YYYY' : 'M/D/YYYY h:mm:ss A';
+				const length = (date || '').length;
+				const formatDate = length > 10 ? 'M/D/YYYY h:mm:ss A' : 'DD-MM-YYYY';
 				return moment(date, formatDate).format('L');
 			} catch (error) {
 				return date || '';
@@ -178,7 +207,8 @@ const PesonalSearch = () => {
 	const printDayDiff = (date) => {
 		if (date) {
 			moment.locale('es');
-			const formatDate = online ? 'DD-MM-YYYY' : 'M/D/YYYY h:mm:ss A';
+			const length = (date || '').length;
+			const formatDate = length > 10 ? 'M/D/YYYY h:mm:ss A' : 'DD-MM-YYYY';
 			const startDate = moment(date, formatDate);
 			const currentDate = moment();
 			return currentDate.diff(startDate, 'days');
@@ -230,6 +260,21 @@ const PesonalSearch = () => {
 					{!online && <OfflineUsersSelect users={users} getUsers={getUsers} />}
 					{userSiscap && userSiscap?.nroDocumento && (
 						<div>
+							{Array.isArray(services) && services.length > 1 && (
+								<Box
+									sx={{
+										maxWidth: '430px',
+										margin: '0 auto 20px',
+									}}
+								>
+									<ServicesSelect
+										services={services}
+										currentService={currentService}
+										setCurrentService={listenServiceChange}
+									/>
+								</Box>
+							)}
+
 							<Box
 								sx={{
 									width: 'fit-content',
@@ -265,7 +310,7 @@ const PesonalSearch = () => {
 													maxWidth: '100%',
 													width: '100%',
 												}}
-												value={valueQr}
+												value={valueQr || ''}
 												viewBox={`0 0 256 256`}
 											/>
 										</Box>
@@ -307,8 +352,7 @@ const PesonalSearch = () => {
 														Servicio:
 													</td>
 													<td>
-														{userSiscap?.nombreServicio ||
-															userSiscap?.servicio}
+														{currentService?.nombreServicio}
 													</td>
 												</tr>
 												{userSiscap?.fechaInicio && (
@@ -341,7 +385,7 @@ const PesonalSearch = () => {
 														<div>
 															<HelmetSvg
 																fillColor={
-																	userSiscap?.helmet ||
+																	currentService?.helmet ||
 																	'green'
 																}
 															/>

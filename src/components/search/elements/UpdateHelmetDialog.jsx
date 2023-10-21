@@ -21,7 +21,7 @@ const helmetList = [
 	{ key: 'green', colorName: 'Verde', colorPrimary: '', colorSecondary: '' },
 ];
 
-const UpdateUserDialog = ({ helmetcolor, user, getCourses, userDocument }) => {
+const UpdateHelmetDialog = ({ helmetcolor, getCourses, userDocument, serviceCode }) => {
 	const [open, setOpen] = useState(false);
 	const [helmet, setHelmet] = useState('');
 	const [isLoading, setIsLoading] = useState(false);
@@ -46,6 +46,7 @@ const UpdateUserDialog = ({ helmetcolor, user, getCourses, userDocument }) => {
 		const data = {
 			helmet: helmet,
 			document: userDocument,
+			service_code: serviceCode,
 		};
 		try {
 			setIsLoading(true);
@@ -82,7 +83,7 @@ const UpdateUserDialog = ({ helmetcolor, user, getCourses, userDocument }) => {
 			</Button>
 			<Dialog open={open} onClose={handleClose} fullWidth={true} maxWidth={'xs'}>
 				{isLoading && <LinearProgress />}
-				<DialogTitle>Editar Usuario</DialogTitle>
+				<DialogTitle>Cambiar color de casco</DialogTitle>
 				<DialogContent>
 					<DialogContentText sx={{ marginBottom: 2 }}>
 						Elige el color de casco
@@ -118,4 +119,4 @@ const UpdateUserDialog = ({ helmetcolor, user, getCourses, userDocument }) => {
 		</div>
 	);
 };
-export default UpdateUserDialog;
+export default UpdateHelmetDialog;

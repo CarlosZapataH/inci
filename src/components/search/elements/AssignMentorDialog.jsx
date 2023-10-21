@@ -13,7 +13,7 @@ import { showValidationErrors } from '@src/helpers/listValidation';
 import * as securityService from '@src/features/security/service/security.service.js';
 import Swal from 'sweetalert2';
 
-const assignMentorDialog = ({ helmetcolor, user, getCourses, userDocument }) => {
+const assignMentorDialog = ({ getCourses, userDocument, serviceCode }) => {
 	const [open, setOpen] = useState(false);
 
 	const [isLoading, setIsLoading] = useState(false);
@@ -39,6 +39,7 @@ const assignMentorDialog = ({ helmetcolor, user, getCourses, userDocument }) => 
 		const data = {
 			coach_id: selectedMentor?.id,
 			document: userDocument,
+			service_code: serviceCode,
 		};
 		try {
 			setIsLoading(true);
