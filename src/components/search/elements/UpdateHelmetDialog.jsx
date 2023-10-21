@@ -45,7 +45,7 @@ const UpdateHelmetDialog = ({ helmetcolor, getCourses, userDocument, serviceCode
 	const sendForm = async () => {
 		const data = {
 			helmet: helmet,
-			document: userDocument,
+			document: (userDocument || '').trim(),
 			service_code: serviceCode,
 		};
 		try {
@@ -78,7 +78,12 @@ const UpdateHelmetDialog = ({ helmetcolor, getCourses, userDocument, serviceCode
 
 	return (
 		<div>
-			<Button size="small" variant="text" onClick={handleClickOpen}>
+			<Button
+				size="small"
+				variant="text"
+				disabled={!serviceCode}
+				onClick={handleClickOpen}
+			>
 				<EditIcon fontSize="small" /> Cambiar color de casco
 			</Button>
 			<Dialog open={open} onClose={handleClose} fullWidth={true} maxWidth={'xs'}>

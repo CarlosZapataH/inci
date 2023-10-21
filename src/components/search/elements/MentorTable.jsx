@@ -56,7 +56,7 @@ const MentorTable = ({ mentors }) => {
 	];
 
 	const joinCharge = (coach) => {
-		const charges = Array.isArray(coach.charges) ? coach.charges : [];
+		const charges = Array.isArray(coach?.charges) ? coach?.charges : [];
 		const result = charges.map((charge) => charge.name);
 		return Array.isArray(result) ? result.join(', ') || '-' : '-';
 	};

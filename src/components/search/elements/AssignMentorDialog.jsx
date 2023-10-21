@@ -38,7 +38,7 @@ const assignMentorDialog = ({ getCourses, userDocument, serviceCode }) => {
 	const sendForm = async () => {
 		const data = {
 			coach_id: selectedMentor?.id,
-			document: userDocument,
+			document: (userDocument || '').trim(),
 			service_code: serviceCode,
 		};
 		try {
@@ -91,7 +91,12 @@ const assignMentorDialog = ({ getCourses, userDocument, serviceCode }) => {
 
 	return (
 		<div>
-			<Button size="small" variant="text" onClick={handleClickOpen}>
+			<Button
+				size="small"
+				variant="text"
+				onClick={handleClickOpen}
+				disabled={!serviceCode}
+			>
 				<AccountIcon fontSize="small" /> Asignar Mentor
 			</Button>
 			<Dialog open={open} onClose={handleClose} fullWidth={true} maxWidth={'xs'}>

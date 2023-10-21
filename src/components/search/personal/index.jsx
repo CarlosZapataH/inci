@@ -183,7 +183,10 @@ const PersonalSearch = () => {
 		try {
 			const { personas } = await getCourseSiscapByUser(data);
 			if (Array.isArray(personas)) {
-				const user = personas.find((user) => user?.nroDocumento == document);
+				const user = personas.find((user) => {
+					return (user?.nroDocumento || '').trim() == (document || '').trim();
+				});
+				console.log('user', user);
 				if (user) {
 					const { services, ...currentUser } = user;
 					setServices(services);
