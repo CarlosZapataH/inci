@@ -186,7 +186,7 @@ const PersonalSearch = () => {
 				const user = personas.find((user) => {
 					return (user?.nroDocumento || '').trim() == (document || '').trim();
 				});
-				console.log('user', user);
+				cleanTables();
 				if (user) {
 					const { services, ...currentUser } = user;
 					setServices(services);
@@ -476,30 +476,32 @@ const PersonalSearch = () => {
 											/>
 										</Box>
 									)}
-									{!!hasPermissionMentor && currentService && (
-										<Box
-											height="initial"
-											display={'flex'}
-											justifyContent={'flex-end'}
-										>
-											<AssignMentorDialog
-												getCourses={getCourses}
-												serviceCode={
-													currentService?.codigoServicio
-												}
-												userDocument={
-													userSiscap?.nroDocumento ||
-													selectedUser?.document
-												}
-											/>
-										</Box>
-									)}
+									{!!hasPermissionMentor &&
+										currentService &&
+										currentService && (
+											<Box
+												height="initial"
+												display={'flex'}
+												justifyContent={'flex-end'}
+											>
+												<AssignMentorDialog
+													getCourses={getCourses}
+													serviceCode={
+														currentService?.codigoServicio
+													}
+													userDocument={
+														userSiscap?.nroDocumento ||
+														selectedUser?.document
+													}
+												/>
+											</Box>
+										)}
 								</Grid>
 							</Grid>
 						</Box>
 					)}
 				</Box>
-				{selectedUser && selectedUser?.nroDocumento && (
+				{selectedUser && selectedUser?.nroDocumento && currentService && (
 					<Box
 						sx={{
 							backgroundColor: 'white.main',
@@ -515,7 +517,7 @@ const PersonalSearch = () => {
 					</Box>
 				)}
 
-				{selectedUser && selectedUser?.nroDocumento && (
+				{selectedUser && selectedUser?.nroDocumento && currentService && (
 					<Box
 						sx={{
 							backgroundColor: 'white.main',
@@ -529,7 +531,7 @@ const PersonalSearch = () => {
 					</Box>
 				)}
 
-				{selectedUser && selectedUser?.nroDocumento && (
+				{selectedUser && selectedUser?.nroDocumento && currentService && (
 					<Box
 						sx={{
 							backgroundColor: 'white.main',

@@ -144,6 +144,7 @@ const PesonalSearch = () => {
 					(personal?.nroDocumento || '').trim() == (userDocument || '').trim()
 				);
 			});
+			cleanTables();
 			if (user) {
 				const { services, ...currentUser } = user;
 				setServices(services);
