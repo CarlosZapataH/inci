@@ -12,7 +12,7 @@ const login = async (params) => {
 const getProfile = async () => {
 	try {
 		const { data } = await http.get('auth/profile', {
-			params: { app_id: parseInt(process.env.REACT_APP_ID), company_id: 1 },
+			params: { app_id: parseInt(process.env.REACT_APP_ID) },
 		});
 		return data || null;
 	} catch (error) {

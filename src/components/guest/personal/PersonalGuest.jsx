@@ -356,28 +356,28 @@ const PesonalSearch = () => {
 														{currentService?.nombreServicio}
 													</td>
 												</tr>
-												{userSiscap?.fechaInicio && (
+												{currentService?.fechaIniServicioActual && (
 													<tr>
 														<td style={{ color: '#0039a6' }}>
 															Fecha de ingreso:
 														</td>
 														<td>
 															{printEntryDate(
-																userSiscap?.fechaInicio
+																currentService?.fechaIniServicioActual
 															)}
 														</td>
 													</tr>
 												)}
-												<tr>
-													<td style={{ color: '#0039a6' }}>
-														Días en la organización:
-													</td>
-													<td>
-														{printDayDiff(
-															userSiscap?.fechaInicio
-														)}
-													</td>
-												</tr>
+												{currentService?.diasServicio && (
+													<tr>
+														<td style={{ color: '#0039a6' }}>
+															Días en la organización:
+														</td>
+														<td>
+															{currentService?.diasServicio}
+														</td>
+													</tr>
+												)}
 												<tr>
 													<td style={{ color: '#0039a6' }}>
 														Color de casco:

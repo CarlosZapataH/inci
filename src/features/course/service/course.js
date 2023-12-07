@@ -3,7 +3,7 @@ import { http } from '@src/features/api/api.js';
 const getUsers = async () => {
 	try {
 		const { data } = await http.get('user', {
-			params: { app_id: parseInt(process.env.REACT_APP_ID), company_id: 1 },
+			params: { app_id: parseInt(process.env.REACT_APP_ID) },
 		});
 		return data || null;
 	} catch (error) {

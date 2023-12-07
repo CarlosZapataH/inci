@@ -233,16 +233,18 @@ const PersonalSearch = () => {
 		}
 	};
 
-	const printDayDiff = (date) => {
+	const printEntryDate = (date) => {
 		if (date) {
-			moment.locale('es');
-			const length = (date || '').length;
-			const formatDate = length > 10 ? 'M/D/YYYY h:mm:ss A' : 'DD-MM-YYYY';
-			const startDate = moment(date, formatDate);
-			const currentDate = moment();
-			return currentDate.diff(startDate, 'days');
+			try {
+				moment.locale('es');
+				const length = (date || '').length;
+				const formatDate = length > 10 ? 'M/D/YYYY h:mm:ss A' : 'DD-MM-YYYY';
+				return moment(date, formatDate).format('L');
+			} catch (error) {
+				return date || '';
+			}
 		}
-		return 0;
+		return date || '';
 	};
 
 	return (
@@ -384,12 +386,14 @@ const PersonalSearch = () => {
 												</td>
 												<td>{selectedUser?.fullName}</td>
 											</tr>
-											<tr>
-												<td style={{ color: '#0039a6' }}>
-													Tipo de documento:
-												</td>
-												<td>{selectedUser?.document_type}</td>
-											</tr>
+											{selectedUser?.document_type && (
+												<tr>
+													<td style={{ color: '#0039a6' }}>
+														Tipo de documento:
+													</td>
+													<td>{selectedUser?.document_type}</td>
+												</tr>
+											)}
 											<tr>
 												<td style={{ color: '#0039a6' }}>
 													Documento de identidad:
@@ -418,24 +422,28 @@ const PersonalSearch = () => {
 													</td>
 												</tr>
 											)}
-											{userSiscap?.fechaInicio && (
+											{currentService?.fechaIniServicioActual && (
 												<tr>
 													<td style={{ color: '#0039a6' }}>
 														Fecha de ingreso:
 													</td>
-													<td>{userSiscap?.fechaInicio}</td>
+													<td>
+														{printEntryDate(
+															currentService?.fechaIniServicioActual
+														)}
+													</td>
 												</tr>
 											)}
-											<tr>
-												<td style={{ color: '#0039a6' }}>
-													Días en la organización:
-												</td>
-												<td>
-													{printDayDiff(
-														userSiscap?.fechaInicio
-													)}
-												</td>
-											</tr>
+											{currentService?.diasServicio && (
+												<tr>
+													<td style={{ color: '#0039a6' }}>
+														Días en la organización:
+													</td>
+													<td>
+														{currentService?.diasServicio}
+													</td>
+												</tr>
+											)}
 											<tr>
 												<td style={{ color: '#0039a6' }}>
 													Color de casco:
