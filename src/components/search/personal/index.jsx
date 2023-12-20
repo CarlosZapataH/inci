@@ -402,15 +402,15 @@ const PersonalSearch = () => {
 											</tr>
 											<tr>
 												<td style={{ color: '#0039a6' }}>
-													Cargo:
+													Legajo:
 												</td>
-												<td>{userSiscap?.puesto}</td>
+												<td>{selectedUser?.legajo}</td>
 											</tr>
 											<tr>
 												<td style={{ color: '#0039a6' }}>
-													Correo electrónico:
+													Cargo:
 												</td>
-												<td>{selectedUser?.email}</td>
+												<td>{userSiscap?.puesto}</td>
 											</tr>
 											{currentService?.nombreServicio && (
 												<tr>

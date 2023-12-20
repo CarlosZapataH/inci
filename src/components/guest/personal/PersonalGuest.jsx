@@ -341,6 +341,12 @@ const PesonalSearch = () => {
 												</tr>
 												<tr>
 													<td style={{ color: '#0039a6' }}>
+														Legajo:
+													</td>
+													<td>{userSiscap?.legajo}</td>
+												</tr>
+												<tr>
+													<td style={{ color: '#0039a6' }}>
 														Cargo:
 													</td>
 													<td>
