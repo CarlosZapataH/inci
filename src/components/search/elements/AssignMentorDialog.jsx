@@ -61,10 +61,13 @@ const assignMentorDialog = ({ getCourses, userDocument, serviceCode }) => {
 
 	const parseUsers = (users) => {
 		if (Array.isArray(users)) {
-			const result = users.map((user, index) => {
+			let result = users.map((user, index) => {
 				const newKey = `${user?.document}-${index}`;
 				return { ...user, newKey };
 			});
+
+			result = result.filter(item => item.document != userDocument);
+
 			return result;
 		}
 		return users;

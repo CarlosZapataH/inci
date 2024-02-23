@@ -27,7 +27,7 @@ const QualificationsTable = ({ qualifications }) => {
 			width: 180,
 			sortable: false,
 		},
-		{ field: 'estado', headerName: 'Estado', width: 120, sortable: false },
+		{ field: 'status', headerName: 'Estado', width: 120, sortable: false },
 	];
 
 	return (
