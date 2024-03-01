@@ -7,6 +7,20 @@ const QualificationsTable = ({ qualifications }) => {
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
+	const getStatusColor = (params)=>{
+		let status = 'default';
+		if(params.value == 'VIGENTE' && params.row?.alert){
+			status = 'warning';
+		}
+		else if(params.value == 'VIGENTE'){
+			status = 'success';
+		}
+		else if(params.value == 'VENCIDO'){
+			status = 'danger';
+		}
+		return status;
+	}
+
 	const columns = [
 		{
 			field: 'nombreCurso',
@@ -27,7 +41,15 @@ const QualificationsTable = ({ qualifications }) => {
 			width: 180,
 			sortable: false,
 		},
-		{ field: 'status', headerName: 'Estado', width: 120, sortable: false },
+		{ 
+			field: 'status', 
+			headerName: 'Estado', 
+			width: 120, 
+			sortable: false,
+			renderCell: (params) => (
+				<span className={'badge-'+getStatusColor(params)}>{params.value}</span>
+			),
+		},
 	];
 
 	return (

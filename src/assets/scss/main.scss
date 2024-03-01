@@ -99,3 +99,27 @@ table.custom-vertical-table {
 		margin-top: 0;
 	}
 }
+
+.badge-danger{
+	border: 1px solid #FF2419;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    background-color: rgba(255, 36, 25, .2);
+    color: #FF2419;
+}
+
+.badge-success{
+	border: 1px solid #2ebd75;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    background-color: rgba(46, 189, 117, .2);
+    color: #2ebd75;
+}
+
+.badge-warning{
+	border: 1px solid #ff7900;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    background-color: rgba(255, 121, 0, .2);
+    color: #ff7900;
+}
