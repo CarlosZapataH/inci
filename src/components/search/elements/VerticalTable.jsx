@@ -42,6 +42,7 @@ const VerticalTable = ({ items, headers }) => {
 																			header?.field
 																	  ] || null
 															}
+															row={item}
 														/>
 													</div>
 												) : (
